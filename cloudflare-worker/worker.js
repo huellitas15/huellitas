@@ -38,7 +38,7 @@ function validateCampaign(campaign) {
 }
 
 const DONATION_FIELDS = [
-  'bankName', 'accountType', 'accountNumber', 'accountHolder', 'accountId',
+  'bankName', 'accountType', 'accountNumber', 'accountHolder', 'accountId', 'accountIdType',
   'deunaQr', 'deunaUrl', 'paypalUrl', 'tiktokUrl'
 ];
 const DONATION_URL_FIELDS = ['deunaQr', 'deunaUrl', 'paypalUrl', 'tiktokUrl'];
@@ -49,6 +49,7 @@ function validateDonationSettings(settings) {
   }
   const clean = {};
   for (const field of DONATION_FIELDS) {
+    if (field === 'accountIdType' && settings[field] === undefined) settings[field] = 'cedula';
     if (typeof settings[field] !== 'string' || settings[field].length > 2048) {
       throw new Error('El campo ' + field + ' no es válido.');
     }
@@ -61,6 +62,7 @@ function validateDonationSettings(settings) {
       }
     }
   }
+  if (!['cedula', 'ruc'].includes(clean.accountIdType)) throw new Error('Selecciona cédula o RUC.');
   return clean;
 }
 
@@ -84,7 +86,17 @@ async function handle(request, env) {
   }
 
   const campaignPath = path.match(/^\/api\/campaigns\/([a-z0-9-]+)$/);
+  const sharePath = path.match(/^\/api\/campaigns\/([a-z0-9-]+)\/share$/);
   const adminCampaignPath = path.match(/^\/api\/admin\/campaigns\/([^/]+)$/);
+  if (sharePath && request.method === 'POST') {
+    const result = await env.DB.prepare(
+      "UPDATE campaigns SET payload=json_set(payload, '$.shareCount', " +
+      "CAST(MAX(0, CAST(COALESCE(json_extract(payload, '$.shareCount'), 0) AS INTEGER)) + 1 AS TEXT)), " +
+      "updated_at=? WHERE slug=? AND status='vigente' RETURNING payload"
+    ).bind(new Date().toISOString(), sharePath[1]).first();
+    return result ? response({ shareCount: JSON.parse(result.payload).shareCount }, 200, headers) :
+      response({ error: 'La campaña no existe o ya está completada.' }, 404, headers);
+  }
   if (campaignPath && request.method === 'GET') {
     const result = await env.DB.prepare(
       'SELECT payload FROM campaigns WHERE slug = ?'
@@ -129,12 +141,22 @@ async function handle(request, env) {
     const campaign = await request.json();
     validateCampaign(campaign);
     if (campaign.id !== adminCampaignPath[1]) return response({ error: 'El identificador no coincide con la ruta.' }, 400, headers);
-    const result = await env.DB.prepare(
-      'UPDATE campaigns SET slug=?, status=?, show_home=?, payload=?, updated_at=? WHERE id=?'
-    ).bind(campaign.slug, campaign.status, 'si', JSON.stringify(campaign),
-      new Date().toISOString(), campaign.id).run();
-    if (!result.meta.changes) return response({ error: 'No se encontró la campaña para actualizar.' }, 404, headers);
-    return response({ campaign }, 200, headers);
+    const delta = campaign.shareCountDelta;
+    delete campaign.shareCountDelta;
+    if (delta !== undefined && (!Number.isSafeInteger(delta) || Math.abs(delta) > 1000000000)) {
+      return response({ error: 'El cambio del contador no es válido.' }, 400, headers);
+    }
+    const result = delta === undefined
+      ? await env.DB.prepare(
+        'UPDATE campaigns SET slug=?, status=?, show_home=?, payload=?, updated_at=? WHERE id=? RETURNING payload'
+      ).bind(campaign.slug, campaign.status, 'si', JSON.stringify(campaign), new Date().toISOString(), campaign.id).first()
+      : await env.DB.prepare(
+        "UPDATE campaigns SET slug=?, status=?, show_home=?, payload=json_set(?, '$.shareCount', " +
+        "CAST(MAX(0, CAST(COALESCE(json_extract(payload, '$.shareCount'), 0) AS INTEGER) + CAST(? AS INTEGER)) AS TEXT)), " +
+        'updated_at=? WHERE id=? RETURNING payload'
+      ).bind(campaign.slug, campaign.status, 'si', JSON.stringify(campaign), delta, new Date().toISOString(), campaign.id).first();
+    if (!result) return response({ error: 'No se encontró la campaña para actualizar.' }, 404, headers);
+    return response({ campaign: JSON.parse(result.payload) }, 200, headers);
   }
 
   if (adminCampaignPath && request.method === 'DELETE') {

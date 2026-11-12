@@ -37,6 +37,8 @@ Abre el panel publicado, escribe la clave y pulsa **Conectar**. Usa **Crear camp
 
 Los métodos de pago se configuran por campaña: completa el número de cuenta para mostrar la transferencia bancaria y/o el usuario de PayPal.me para mostrar PayPal. Los métodos sin configurar no aparecen. Kira conserva su ventana de donación y la página general `donar/` es independiente.
 
+En cada formulario bancario se puede elegir cédula o RUC; los datos anteriores sin selección se muestran como cédula. El contador de compartidos aumenta por cada pulsación en una campaña vigente, incluso si se cancela la ventana de compartir. No mide comparticiones confirmadas. El panel permite ajustarlo y conserva los clics recibidos mientras se edita.
+
 Para la página general `/donar/`, selecciona **Editar página de donaciones** en el panel conectado. Allí puedes guardar la cuenta bancaria, la URL pública HTTPS de la imagen QR de Deuna, su enlace de pago, el enlace de PayPal y TikTok. Los métodos vacíos no aparecen. La imagen QR debe estar alojada en una URL pública accesible; el panel guarda el enlace, no sube la imagen. Si sustituyes la imagen en la misma URL, la caché puede mostrar la anterior: usa una URL distinta al actualizarla.
 
 ## API
@@ -45,9 +47,10 @@ Para la página general `/donar/`, selecciona **Editar página de donaciones** e
 - `PUT /api/admin/donation-settings`: guardar los datos generales, protegido por `ADMIN_TOKEN`.
 - `GET /api/campaigns`: todos los casos, vigentes y completados, para la portada.
 - `GET /api/campaigns/:slug`: un caso por su nombre de enlace.
+- `POST /api/campaigns/:slug/share`: registrar un clic de compartir en un caso vigente, sin clave.
 - `GET /api/admin/campaigns`: lista administrativa, protegida por `ADMIN_TOKEN`.
 - `POST /api/admin/campaigns`: crear un caso.
 - `PUT /api/admin/campaigns/:id`: actualizar un caso.
 - `DELETE /api/admin/campaigns/:id`: eliminar un caso.
 
-Todas las escrituras requieren el secreto de administración.
+Las escrituras administrativas requieren el secreto de administración; el registro de clics es público y no garantiza que la persona haya compartido el enlace.

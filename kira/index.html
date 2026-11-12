@@ -1059,6 +1059,7 @@
         <span>Rescate Animal · Maltrato animal</span>
       </div>
       <h1 class="campaign-title">Ayuda urgente: Kira sufrió una fractura craneal debido a una brutal agresión</h1>
+      <p id="share-status" role="status" style="color:#8a3b18;font-size:14px"></p>
     </div>
 
     <!-- GRID DE 2 COLUMNAS -->
@@ -1241,10 +1242,10 @@ Si puedes apoyarnos con un granito de arena, desde $1 dólar, todo va directo a 
 
             <div class="bank-field-row">
               <div>
-                <div class="bank-field-label">Cédula / RUC:</div>
+                <div class="bank-field-label" id="accountIdLabel">Cédula:</div>
                 <div class="bank-field-val" id="numCedula">1308308707</div>
               </div>
-              <button class="btn-copy" onclick="copiarDato(document.getElementById('numCedula').textContent, 'Cédula copiada')">
+              <button class="btn-copy" onclick="copiarDato(document.getElementById('numCedula').textContent, 'Identificación copiada')">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                   <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -1371,17 +1372,22 @@ Si puedes apoyarnos con un granito de arena, desde $1 dólar, todo va directo a 
       }, 2500);
     }
 
-    // COMPARTIR CAMPAÑA
+    let contadorCompartidos = 0;
+    let estadoCampana = null;
     function compartirCampana() {
-      if (navigator.share) {
-        navigator.share({
-          title: document.title,
-          text: document.querySelector('meta[name="description"]').content,
-          url: window.location.href,
-        }).catch(() => {});
-      } else {
-        copiarDato(window.location.href, 'Enlace de la campaña copiado para compartir');
+      if (estadoCampana === 'completada') {
+        return;
       }
+      const shareStatus = document.getElementById('share-status');
+      shareStatus.textContent = '';
+      compartirCampanaPublica('kira', count => {
+        contadorCompartidos = Math.max(contadorCompartidos, count);
+        const counter = document.querySelector('.stats-row span:last-child');
+        if (counter) counter.textContent = contadorCompartidos + ' veces compartido';
+      }, (mensaje, error) => {
+        if (error) shareStatus.textContent += (shareStatus.textContent ? ' ' : '') + mensaje;
+        else if (!shareStatus.textContent) shareStatus.textContent = mensaje;
+      });
     }
   </script>
 
@@ -1409,6 +1415,7 @@ Si puedes apoyarnos con un granito de arena, desde $1 dólar, todo va directo a 
         });
       </script>
   <script src="../api-config.js"></script>
+  <script src="../compartir.js"></script>
   <script>
     (async function cargarCampanaDesdePanel() {
       const apiUrl = window.HUELLAS_API_URL;
@@ -1428,6 +1435,7 @@ Si puedes apoyarnos con un granito de arena, desde $1 dólar, todo va directo a 
         if (!response.ok) throw new Error('Error HTTP ' + response.status);
 
         const campaign = await response.json();
+        estadoCampana = campaign.status;
         const setText = (selector, value) => {
           const element = document.querySelector(selector);
           if (element && value !== undefined && value !== null) element.textContent = value;
@@ -1464,6 +1472,7 @@ Si puedes apoyarnos con un granito de arena, desde $1 dólar, todo va directo a 
         setText('#numCuenta', accountNumber);
         setText('#accountHolder', campaign.accountHolder || '');
         setText('#numCedula', campaign.accountId || '');
+        setText('#accountIdLabel', campaign.accountIdType === 'ruc' ? 'RUC:' : 'Cédula:');
         ['accountType', 'accountHolder', 'numCedula'].forEach(id => {
           const field = document.getElementById(id);
           field.closest('.bank-field-row').hidden = !field.textContent.trim();
@@ -1515,7 +1524,8 @@ Si puedes apoyarnos con un granito de arena, desde $1 dólar, todo va directo a 
         document.querySelector('.progress-bar').style.width =
           Math.min(100, (Number(campaign.raised) || 0) / Math.max(1, Number(campaign.goal) || 0) * 100) + '%';
         setText('.stats-row span:first-child', (campaign.donationCount || '0') + ' donaciones');
-        setText('.stats-row span:last-child', (campaign.shareCount || '0') + ' veces compartido');
+        contadorCompartidos = Math.max(contadorCompartidos, Number(campaign.shareCount) || 0);
+        setText('.stats-row span:last-child', contadorCompartidos + ' veces compartido');
         setText('.mobile-float-raised', raised + ' USD');
         setText('.mobile-float-target', 'de ' + goal + ' meta');
 
@@ -1561,6 +1571,7 @@ Si puedes apoyarnos con un granito de arena, desde $1 dólar, todo va directo a 
 
         if (campaign.status === 'completada') {
           document.querySelector('.nav-actions .btn-nav-donate').hidden = true;
+          document.querySelector('.btn-nav-share').hidden = true;
           document.querySelector('.mobile-float-bar').hidden = true;
           const card = document.querySelector('.donation-card');
           card.replaceChildren(

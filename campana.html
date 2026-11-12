@@ -43,6 +43,7 @@
     .payment { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); }
     .payment p { margin: 8px 0; overflow-wrap: anywhere; }
     .paypal { display: inline-block; margin-top: 12px; padding: 11px 18px; border-radius: 99px; color: white; background: var(--green); font-weight: 700; }
+    .share-button { border: 0; cursor: pointer; font: inherit; }
     .update { padding: 14px 0; border-bottom: 1px solid var(--border); }
     .update:last-child { border: 0; }
     .donor { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
@@ -57,6 +58,7 @@
   <main id="app"><p class="muted">Cargando historia…</p></main>
   <footer>Huellas Felices · Historias de rescate, cuidado y nuevas oportunidades.</footer>
   <script src="./api-config.js"></script>
+  <script src="./compartir.js"></script>
   <script>
     'use strict';
     const root = document.getElementById('app');
@@ -157,9 +159,25 @@
         side.append(track);
         const stats = document.createElement('div');
         stats.className = 'stats';
-        stats.append(text('span', '', (campaign.donationCount || '0') + ' donaciones'),
-          text('span', '', (campaign.shareCount || '0') + ' veces compartido'));
+        const shareCount = text('span', '', (campaign.shareCount || '0') + ' veces compartido');
+        let currentShareCount = Number(campaign.shareCount) || 0;
+        stats.append(text('span', '', (campaign.donationCount || '0') + ' donaciones'), shareCount);
         side.append(stats);
+        const shareButton = text('button', 'paypal share-button', 'Compartir campaña');
+        shareButton.type = 'button';
+        const shareStatus = text('p', 'muted', '');
+        shareStatus.setAttribute('role', 'status');
+        shareButton.addEventListener('click', () => {
+          shareStatus.textContent = '';
+          compartirCampanaPublica(slug, count => {
+            currentShareCount = Math.max(currentShareCount, count);
+            shareCount.textContent = currentShareCount + ' veces compartido';
+          }, (message, error) => {
+            if (error) shareStatus.textContent += (shareStatus.textContent ? ' ' : '') + message;
+            else if (!shareStatus.textContent) shareStatus.textContent = message;
+          });
+        });
+        side.append(shareButton, shareStatus);
         const payment = document.createElement('section');
         payment.className = 'payment';
         payment.append(text('h2', '', 'Cómo ayudar'));
@@ -170,7 +188,7 @@
             (campaign.accountType ? ' · ' + campaign.accountType : '')),
             text('p', '', 'Cuenta: ' + accountNumber));
           if (campaign.accountHolder) payment.append(text('p', '', 'Titular: ' + campaign.accountHolder));
-          if (campaign.accountId) payment.append(text('p', '', 'Cédula / RUC: ' + campaign.accountId));
+          if (campaign.accountId) payment.append(text('p', '', (campaign.accountIdType === 'ruc' ? 'RUC: ' : 'Cédula: ') + campaign.accountId));
         }
         if (paypalUser) {
           const paypal = document.createElement('a');

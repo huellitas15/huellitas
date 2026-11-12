@@ -101,7 +101,8 @@
               <label>Tipo de cuenta<input name="accountType"></label>
               <label>Número de cuenta<input name="accountNumber"></label>
               <label>Titular<input name="accountHolder"></label>
-              <label>Cédula o RUC<input name="accountId"></label>
+              <label>Tipo de identificación<select name="accountIdType"><option value="cedula">Cédula</option><option value="ruc">RUC</option></select></label>
+              <label><span data-id-label>Número de cédula</span><input name="accountId"></label>
             </div>
             <h3>Deuna</h3>
             <div class="grid">
@@ -155,7 +156,7 @@
           </section>
           <section class="editor-section">
             <h2>Montos y donaciones</h2>
-            <p class="hint">Los montos y contadores se actualizan manualmente. Al completar el caso, sus datos quedan visibles como resultado.</p>
+            <p class="hint">Los montos y donaciones se actualizan manualmente. El contador de compartidos aumenta con cada pulsación y también se puede ajustar aquí.</p>
             <div class="grid">
               <label>Total recaudado (USD)<input name="raised" type="number" min="0" step="0.01" value="0"></label>
               <label>Meta (USD)<input name="goal" type="number" min="0" step="0.01"></label>
@@ -172,7 +173,8 @@
               <label>Tipo de cuenta<input name="accountType" value="Ahorros"></label>
               <label>Número de cuenta<input name="accountNumber"></label>
               <label>Titular<input name="accountHolder"></label>
-              <label>Cédula o RUC<input name="accountId"></label>
+              <label>Tipo de identificación<select name="accountIdType"><option value="cedula">Cédula</option><option value="ruc">RUC</option></select></label>
+              <label><span data-id-label>Número de cédula</span><input name="accountId"></label>
             </div>
             <h3>PayPal</h3>
             <div class="grid">
@@ -209,7 +211,7 @@
     const form = document.getElementById('editor');
     const donationForm = document.getElementById('donation-editor');
     const donationMessage = document.getElementById('donation-message');
-    const donationFields = ['bankName', 'accountType', 'accountNumber', 'accountHolder', 'accountId',
+    const donationFields = ['bankName', 'accountType', 'accountNumber', 'accountHolder', 'accountId', 'accountIdType',
       'deunaQr', 'deunaUrl', 'paypalUrl', 'tiktokUrl'];
     const donationUrlFields = ['deunaQr', 'deunaUrl', 'paypalUrl', 'tiktokUrl'];
     const statusNode = document.getElementById('status');
@@ -217,7 +219,7 @@
     const fields = ['title', 'slug', 'category', 'brand', 'organizer', 'organizerDescription',
       'storyTitle', 'photoCaption', 'story', 'highlight', 'storyEnding', 'photo1', 'photo2',
       'photo3', 'raised', 'goal', 'donationCount', 'shareCount', 'email', 'tiktok',
-      'bankName', 'accountType', 'accountNumber', 'accountHolder', 'accountId', 'paypal'];
+      'bankName', 'accountType', 'accountNumber', 'accountHolder', 'accountId', 'accountIdType', 'paypal'];
     const listSchemas = {
       additionalPhotos: [['url', 'URL de la foto', 'url']],
       updates: [['title', 'Título', 'text'], ['date', 'Fecha', 'date'], ['description', 'Contenido', 'textarea']],
@@ -229,6 +231,12 @@
     let connected = false;
     let dirty = false;
     let connectedUrl = '';
+    let originalShareCount = 0;
+
+    function updateIdLabel(editor) {
+      editor.querySelector('[data-id-label]').textContent =
+        editor.elements.accountIdType.value === 'ruc' ? 'Número de RUC' : 'Número de cédula';
+    }
 
     function lockDonationOperation(locked) {
       document.querySelector('.workspace').inert = locked;
@@ -276,6 +284,7 @@
       campaign.brand = campaign.brand || 'Huellas Felices';
       campaign.storyTitle = campaign.storyTitle || 'La historia';
       campaign.accountType = campaign.accountType || 'Ahorros';
+      campaign.accountIdType = 'cedula';
       campaign.raised = campaign.raised || '0';
       campaign.donationCount = campaign.donationCount || '0';
       campaign.shareCount = campaign.shareCount || '0';
@@ -340,7 +349,8 @@
       form.hidden = false;
       donationForm.hidden = true;
       document.getElementById('empty').hidden = true;
-      fields.forEach(key => { form.elements[key].value = campaign[key] || ''; });
+      fields.forEach(key => { form.elements[key].value = campaign[key] || (key === 'accountIdType' ? 'cedula' : ''); });
+      updateIdLabel(form);
       form.elements.status.value = campaign.status || 'vigente';
       Object.keys(listSchemas).forEach(kind => renderEntries(kind, campaign[kind] || []));
       updateStatusFields();
@@ -366,6 +376,7 @@
         button.addEventListener('click', () => {
           if (dirty && !confirm('Hay cambios sin guardar. ¿Descartarlos?')) return;
           dirty = false;
+          originalShareCount = Number(campaign.shareCount || 0);
           renderEditor(campaign);
           showMessage('');
         });
@@ -434,7 +445,8 @@
       lockDonationOperation(true);
       try {
         const settings = await request('/api/donation-settings');
-        donationFields.forEach(key => { donationForm.elements[key].value = settings[key] || ''; });
+        donationFields.forEach(key => { donationForm.elements[key].value = settings[key] || (key === 'accountIdType' ? 'cedula' : ''); });
+        updateIdLabel(donationForm);
         dirty = false;
         currentId = null;
         form.hidden = true;
@@ -451,7 +463,10 @@
       }
     });
 
-    donationForm.addEventListener('input', () => { dirty = true; });
+    donationForm.addEventListener('input', event => {
+      dirty = true;
+      if (event.target.name === 'accountIdType') updateIdLabel(donationForm);
+    });
     donationForm.addEventListener('submit', async event => {
       event.preventDefault();
       if (!connected) { donationMessage.textContent = 'Conecta la base de datos primero.'; return; }
@@ -494,6 +509,7 @@
       if (!connected) { showMessage('Conecta la base de datos primero.', true); return; }
       if (dirty && !confirm('Hay cambios sin guardar. ¿Descartarlos?')) return;
       dirty = true;
+      originalShareCount = 0;
       renderEditor(newCampaign());
       showMessage('Completa los datos del caso y guarda para que aparezca en la página.');
     });
@@ -501,6 +517,7 @@
     form.addEventListener('input', event => {
       dirty = true;
       if (event.target.name === 'status') updateStatusFields();
+      if (event.target.name === 'accountIdType') updateIdLabel(form);
     });
     document.querySelectorAll('[data-add]').forEach(button => button.addEventListener('click', () => {
       const campaign = collect();
@@ -532,13 +549,16 @@
       showMessage('Guardando en la base de datos…');
       try {
         const existing = campaigns.some(item => item.id === campaign.id);
-        await request(existing ? '/api/admin/campaigns/' + encodeURIComponent(campaign.id) : '/api/admin/campaigns', {
+        if (existing) campaign.shareCountDelta = Number(campaign.shareCount || 0) - originalShareCount;
+        const result = await request(existing ? '/api/admin/campaigns/' + encodeURIComponent(campaign.id) : '/api/admin/campaigns', {
           method: existing ? 'PUT' : 'POST',
           body: JSON.stringify(campaign)
         });
-        campaigns = campaigns.filter(item => item.id !== campaign.id).concat(campaign);
+        const saved = result.campaign;
+        campaigns = campaigns.filter(item => item.id !== saved.id).concat(saved);
         dirty = false;
-        renderEditor(campaign);
+        originalShareCount = Number(saved.shareCount || 0);
+        renderEditor(saved);
         showMessage('Guardado. El caso ya aparece en la portada y en su página pública.');
       } catch (error) {
         showMessage('No se pudo guardar: ' + error.message, true);
