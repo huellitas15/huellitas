@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ayuda para Kira: Cirugía craneal y recuperación — Huellas Felices</title>
+  <meta name="description" content="No entendemos cómo alguien puede tener tanta maldad. A Kira la atacaron sin piedad, le dieron un golpe seco con un fierro en la cabeza y la dejaron tirada ">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gfm-green: #02a95c;
+      --gfm-green-hover: #008748;
+      --gfm-green-light: #e8f7f0;
+      --text-main: #2b2b2b;
+      --text-muted: #5e5e5e;
+      --text-light: #828282;
+      --bg-page: #fbfaf8;
+      --bg-card: #ffffff;
+      --border-color: #e8e6e1;
+      --border-dark: #d2cec6;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 80px;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* TOP NAVBAR */
+    .navbar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    .nav-container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 19px;
+      color: #1a1a1a;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--gfm-green-light);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gfm-green);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-nav-share {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-weight: 600;
+      font-size: 14px;
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-nav-share:hover {
+      background: #f5f5f5;
+    }
+
+    .btn-nav-donate {
+      background: var(--gfm-green);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 9px 20px;
+      border-radius: var(--radius-full);
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-nav-donate:hover {
+      background: var(--gfm-green-hover);
+    }
+
+    /* MAIN WRAPPER */
+    .main-container {
+      max-width: 1140px;
+      margin: 28px auto 0;
+      padding: 0 20px;
+    }
+
+    /* HEADER OF CAMPAIGN */
+    .campaign-header {
+      margin-bottom: 24px;
+    }
+
+    .category-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gfm-green);
+      background: var(--gfm-green-light);
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      margin-bottom: 12px;
+    }
+
+    .campaign-title {
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1.25;
+      color: #1a1a1a;
+      letter-spacing: -0.03em;
+    }
+
+    /* 2 COLUMN GRID */
+    .campaign-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+
+    @media (min-width: 960px) {
+      .campaign-grid {
+        grid-template-columns: 660px 1fr;
+        align-items: start;
+      }
+      .campaign-title {
+        font-size: 38px;
+      }
+    }
+
+    /* MAIN MEDIA CARD */
+    .media-card {
+      background: #000;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+
+    .media-card img {
+      width: 100%;
+      height: 420px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .media-badge {
+      position: absolute;
+      bottom: 14px;
+      left: 14px;
+      background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(4px);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ORGANIZER CARD */
+    .organizer-strip {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border-color);
+      margin-top: 10px;
+    }
+
+    .organizer-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-full);
+      background: #e5ece8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gfm-green);
+      font-weight: 700;
+    }
+
+    .organizer-info {
+      flex: 1;
+    }
+
+    .organizer-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1c1c1c;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .verified-icon {
+      color: var(--gfm-green);
+      display: inline-flex;
+    }
+
+    .organizer-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* CAMPAIGN STORY */
+    .story-section {
+      padding: 28px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .story-section h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: #141414;
+    }
+
+    .story-section p {
+      font-size: 16px;
+      color: #383838;
+      line-height: 1.75;
+      margin-bottom: 16px;
+    }
+
+    .callout-box {
+      background: var(--bg-card);
+      border-left: 4px solid var(--gfm-green);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 16px 20px;
+      margin: 20px 0;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .callout-box p {
+      margin-bottom: 0;
+      font-weight: 500;
+      color: #242424;
+    }
+
+    /* UPDATES (ACTUALIZACIONES) */
+    .updates-section {
+      padding: 30px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .updates-section h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .update-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .update-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .update-tag {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--gfm-green);
+      letter-spacing: 0.05em;
+    }
+
+    .update-date {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .update-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .update-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* OTHER CASES */
+    .other-cases-section {
+      padding: 36px 0;
+    }
+
+    .other-cases-section h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .cases-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (min-width: 600px) {
+      .cases-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .case-card-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .case-card-item:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .case-thumb {
+      height: 120px;
+      width: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .case-body {
+      padding: 14px;
+    }
+
+    .case-badge {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--gfm-green);
+    }
+
+    .case-name {
+      font-size: 15px;
+      font-weight: 700;
+      margin: 4px 0 6px;
+    }
+
+    .case-status {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* SIDEBAR STICKY DONATION CARD (GoFundMe Style) */
+    .sidebar-wrapper {
+      position: relative;
+    }
+
+    .donation-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      box-shadow: var(--shadow-md);
+      position: sticky;
+      top: 90px;
+    }
+
+    .amount-raised {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .current-amount {
+      font-size: 32px;
+      font-weight: 800;
+      color: #1a1a1a;
+      letter-spacing: -0.02em;
+    }
+
+    .target-amount {
+      font-size: 15px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Progress bar */
+    .progress-track {
+      background: #edeae4;
+      height: 8px;
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin: 14px 0 10px;
+    }
+
+    .progress-bar {
+      background: var(--gfm-green);
+      height: 100%;
+      width: 18%; /* 55 de 310 */
+      border-radius: var(--radius-full);
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 22px;
+    }
+
+    .btn-donate-large {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      background: var(--gfm-green);
+      color: #ffffff;
+      font-size: 17px;
+      font-weight: 700;
+      padding: 16px;
+      border-radius: var(--radius-md);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(2, 169, 92, 0.28);
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn-donate-large:hover {
+      background: var(--gfm-green-hover);
+    }
+
+    .btn-donate-large:active {
+      transform: scale(0.99);
+    }
+
+    .btn-share-large {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      background: #ffffff;
+      color: var(--text-main);
+      font-size: 15px;
+      font-weight: 700;
+      padding: 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-dark);
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
+
+    .btn-share-large:hover {
+      background: #f7f6f4;
+    }
+
+    /* RECENT DONATIONS FEED IN SIDEBAR */
+    .sidebar-donors {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .sidebar-donors-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sidebar-donor-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .sidebar-donor-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .sidebar-donor-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-full);
+      background: #f1eee9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gfm-green);
+    }
+
+    .sidebar-donor-details {
+      flex: 1;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .sidebar-donor-name {
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+
+    .sidebar-donor-meta {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    .sidebar-donor-val {
+      font-weight: 700;
+      color: #1a1a1a;
+      font-size: 14px;
+    }
+
+    /* FLOATING BOTTOM BAR (MOBILE ONLY) */
+    .mobile-float-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border-top: 1px solid var(--border-color);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      z-index: 50;
+      box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
+    }
+
+    .mobile-float-info {
+      line-height: 1.2;
+    }
+
+    .mobile-float-raised {
+      font-size: 17px;
+      font-weight: 800;
+      color: #1a1a1a;
+    }
+
+    .mobile-float-target {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .mobile-float-btn {
+      flex: 1;
+      max-width: 200px;
+      background: var(--gfm-green);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 12px 18px;
+      border-radius: var(--radius-full);
+      border: none;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    @media (min-width: 960px) {
+      .mobile-float-bar {
+        display: none;
+      }
+      body {
+        padding-bottom: 0;
+      }
+    }
+
+    /* FOOTER */
+    footer {
+      background: #ffffff;
+      border-top: 1px solid var(--border-color);
+      margin-top: 60px;
+      padding: 40px 20px;
+    }
+
+    .footer-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+      text-align: center;
+    }
+
+    @media (min-width: 600px) {
+      .footer-inner {
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: left;
+      }
+    }
+
+    .footer-email-box {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .footer-email-address {
+      font-weight: 700;
+      color: #1a1a1a;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .tiktok-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #141414;
+      background: #f5f5f5;
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      transition: background 0.2s;
+    }
+
+    .tiktok-link:hover {
+      background: #eaeaea;
+    }
+
+    /* DONATION MODAL (CHECKOUT EXPERIENCE) */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      animation: modalFade 0.2s ease-out;
+    }
+
+    @keyframes modalFade {
+      from { opacity: 0; transform: scale(0.97); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 19px;
+      font-weight: 800;
+      color: #1a1a1a;
+    }
+
+    .btn-close-modal {
+      background: transparent;
+      border: none;
+      font-size: 24px;
+      line-height: 1;
+      cursor: pointer;
+      color: var(--text-light);
+      padding: 4px;
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    /* AMOUNT PICKER */
+    .amount-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .amount-options {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .btn-amt {
+      background: #f7f6f4;
+      border: 1px solid var(--border-color);
+      padding: 12px 6px;
+      font-size: 16px;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s;
+      color: var(--text-main);
+    }
+
+    .btn-amt.active, .btn-amt:hover {
+      background: var(--gfm-green-light);
+      border-color: var(--gfm-green);
+      color: var(--gfm-green-hover);
+    }
+
+    .custom-amt-input-wrap {
+      position: relative;
+      margin-bottom: 24px;
+    }
+
+    .currency-sign {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .custom-amt-input {
+      width: 100%;
+      padding: 12px 14px 12px 30px;
+      font-size: 16px;
+      font-weight: 700;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      outline: none;
+      font-family: inherit;
+    }
+
+    .custom-amt-input:focus {
+      border-color: var(--gfm-green);
+    }
+
+    /* PAYMENT METHOD TABS */
+    .payment-tabs {
+      display: flex;
+      gap: 6px;
+      background: #f2efe9;
+      padding: 4px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 9px 4px;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: #ffffff;
+      color: #1a1a1a;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* BANCO GUAYAQUIL BOX */
+    .bank-card-box {
+      background: #fbfaf8;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 18px;
+    }
+
+    .bank-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      color: #b51268; /* Guayaquil Pink accent */
+      font-size: 15px;
+      margin-bottom: 14px;
+    }
+
+    .bank-field-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #eeebe4;
+      font-size: 14px;
+    }
+
+    .bank-field-row:last-child {
+      border-bottom: none;
+    }
+
+    .bank-field-label {
+      color: var(--text-muted);
+    }
+
+    .bank-field-val {
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+
+    .btn-copy {
+      background: #ffffff;
+      border: 1px solid var(--border-dark);
+      border-radius: var(--radius-sm);
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-main);
+      transition: all 0.2s;
+    }
+
+    .btn-copy:hover {
+      background: #f2efe9;
+    }
+
+    /* PAYPAL TAB */
+    .paypal-box {
+      text-align: center;
+      padding: 16px 0;
+    }
+
+    .btn-paypal-checkout {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      background: #ffc439;
+      color: #111;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 14px;
+      border-radius: var(--radius-full);
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-paypal-checkout:hover {
+      background: #f2ba32;
+    }
+
+    /* COMPROBANTES NOTE */
+    .voucher-notice {
+      background: #f4f8f5;
+      border: 1px solid #d7ecdf;
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 13px;
+      color: #235436;
+    }
+
+    /* TOAST NOTIFICATION */
+    .toast-msg {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1c1c1c;
+      color: #ffffff;
+      padding: 12px 22px;
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: var(--shadow-lg);
+      z-index: 200;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+      opacity: 0;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toast-msg.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+<style>.media-card img[hidden], [hidden] { display: none !important; } .gallery-nav { position: absolute; top: 12px; right: 12px; display: flex; gap: 6px; } .gallery-button { border: 0; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; background: #fff; color: #222; font-weight: 700; } .gallery-button[aria-pressed="true"] { background: #02a95c; color: #fff; } .case-card-item { display: block; } .back-home { display:inline-block; margin-bottom:20px; color:#008748; font-size:14px; font-weight:700; } .back-home:hover { text-decoration:underline; } .back-home:focus-visible { outline:2px solid #008748; outline-offset:3px; } .completed-badge { display:inline-block; padding:6px 12px; background:#e8f7f0; color:#008748; border-radius:99px; font-size:13px; font-weight:700; margin-bottom:16px; } .completed-goal { font-size:28px; font-weight:800; } .completed-copy { color:#5e5e5e; margin-top:12px; white-space:pre-line; } .gallery-nav { left:12px; flex-wrap:wrap; justify-content:flex-end; max-height:40%; overflow-y:auto; } .verified-icon { color: #02a95c; display: inline-flex; flex-shrink: 0; }
+        @media (max-width: 959px) {
+          .campaign-grid { gap: 20px; }
+          .campaign-active > div:first-child { display: contents; }
+          .campaign-active .media-card { order: 0; }
+          .campaign-active .organizer-strip { order: 1; }
+          .campaign-active .sidebar-wrapper { order: 2; }
+          .campaign-active .story-section { order: 3; }
+          .campaign-active .updates-section { order: 4; }
+          .donation-card { position: static; }
+          .media-card img { height: auto; aspect-ratio: 16 / 10; }
+          .mobile-float-bar { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+          body:has(.mobile-float-bar) { padding-bottom: calc(90px + env(safe-area-inset-bottom)); }
+        }
+        @media (max-width: 560px) {
+          .nav-container { padding: 10px 12px; gap: 8px; }
+          .brand { min-width: 0; font-size: 15px; gap: 6px; }
+          .brand-icon { flex-shrink: 0; }
+          .nav-actions { gap: 6px; }
+          .btn-nav-share, .btn-nav-donate { padding: 8px 10px; font-size: 12px; }
+          .main-container { padding: 0 14px; margin-top: 20px; }
+          .campaign-title { font-size: 27px; overflow-wrap: anywhere; }
+          .organizer-info, .sidebar-wrapper { min-width: 0; overflow-wrap: anywhere; }
+          .donation-card { padding: 20px 16px; }
+          .amount-raised { flex-wrap: wrap; }
+          .modal-body { padding: 18px; }
+          .bank-field-row { gap: 10px; overflow-wrap: anywhere; }
+        }</style></head>
+<body>
+
+  <!-- BARRA DE NAVEGACIÓN SUPERIOR (GOFUNDME STYLE) -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <div class="brand-icon">
+          <!-- Patita Minimalista -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <ellipse cx="8.5" cy="5" rx="2.5" ry="3"></ellipse>
+            <ellipse cx="15.5" cy="5" rx="2.5" ry="3"></ellipse>
+            <ellipse cx="4.5" cy="11" rx="2.2" ry="2.8"></ellipse>
+            <ellipse cx="19.5" cy="11" rx="2.2" ry="2.8"></ellipse>
+            <path d="M12 11c-3.6 0-6.5 2.6-6.5 6.2 0 2.2 2.2 4.1 6.5 4.1s6.5-1.9 6.5-4.1C18.5 13.6 15.6 11 12 11z"></path>
+          </svg>
+        </div>
+        <span>Huellas Felices</span>
+      </div>
+
+      <div class="nav-actions">
+        <button class="btn-nav-share" onclick="compartirCampana()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+            <polyline points="16 6 12 2 8 6"></polyline>
+            <line x1="12" y1="2" x2="12" y2="15"></line>
+          </svg>
+          <span>Compartir</span>
+        </button>
+        <button class="btn-nav-donate" onclick="abrirModalDonacion()">DONA AHORA</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="main-container">
+    
+    <!-- ENCABEZADO DE CAMPAÑA -->
+    <div class="campaign-header">
+      <div class="category-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+        </svg>
+        <span>Rescate Animal · Maltrato animal</span>
+      </div>
+      <h1 class="campaign-title">Ayuda urgente: Kira sufrió una fractura craneal debido a una brutal agresión</h1>
+    </div>
+
+    <!-- GRID DE 2 COLUMNAS -->
+    <div class="campaign-grid campaign-active">
+      
+      <!-- COLUMNA PRINCIPAL (IZQUIERDA) -->
+      <div>
+        
+        <!-- FOTO PRINCIPAL -->
+        <div class="media-card"><img src="http://i.ibb.co/wh8GvMXz/KIRA-1.jpg" alt="Ayuda para Kira: Cirugía craneal y recuperación — foto 1"><img src="https://i.ibb.co/yn7XKBrj/KIRA-2.jpg" alt="Ayuda para Kira: Cirugía craneal y recuperación — foto 2" hidden=""><img src="https://i.ibb.co/pB2TjsyR/KIRA-3.jpg" alt="Ayuda para Kira: Cirugía craneal y recuperación — foto 3" hidden=""><img src="https://i.ibb.co/LXGqD0WF/KIRA-4.jpg" alt="Ayuda para Kira: Cirugía craneal y recuperación — foto 4" hidden=""><div class="gallery-nav"><button class="gallery-button" type="button" aria-label="Mostrar foto 1" aria-pressed="true" data-gallery-index="0">1</button><button class="gallery-button" type="button" aria-label="Mostrar foto 2" aria-pressed="false" data-gallery-index="1">2</button><button class="gallery-button" type="button" aria-label="Mostrar foto 3" aria-pressed="false" data-gallery-index="2">3</button><button class="gallery-button" type="button" aria-label="Mostrar foto 4" aria-pressed="false" data-gallery-index="3">4</button></div><div class="media-badge">Fotografía directa del caso</div></div>
+
+        <!-- IDENTIFICACIÓN DEL ORGANIZADOR -->
+        <div class="organizer-strip">
+          <div class="organizer-avatar">FH</div>
+          <div class="organizer-info">
+            <div class="organizer-name">
+              <span>Fundación Huellitas</span>
+              <span class="verified-icon" title="Organizador verificado" aria-label="Organizador verificado">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path>
+                </svg>
+              </span>
+            </div>
+            <div class="organizer-sub">Donación protegida · Organizador verificado</div>
+          </div>
+        </div>
+
+        <!-- HISTORIA DEL CASO -->
+        <div class="story-section"><h2>Su historia</h2><p>No entendemos cómo alguien puede tener tanta maldad. A Kira la atacaron sin piedad, le dieron un golpe seco con un fierro en la cabeza y la dejaron tirada en la vereda como si no valiera nada.</p><p>Cuando la encontramos estaba temblando, ensangrentada y apenas reaccionaba. La llevamos corriendo a la veterinaria y el golpe fue tan fuerte que tiene un traumatismo grave en la cabeza, una inflamación terrible y riesgo de daño neurológico. </p><p>Ahorita está internada con suero, medicinas fuertes para el dolor y bajo observación estricta para ver cómo evoluciona en las próximas horas.</p><p>Lo que más nos parte el alma es que, a pesar de lo que le hicieron, Kira no se rinde. Cuando nos acercamos a hablarle intenta mover la colita; tiene unas ganas inmensas de vivir y no la vamos a abandonar.</p><p>Fue trasladada de inmediato a la clínica veterinaria para estabilizarla y realizarle radiografías de urgencia. El diagnóstico confirmó una fractura craneal que requirió intervención quirúrgica para retirar esquirlas óseas y suturar el tejido dañado.</p><div class="callout-box"><p>Kira sobrevivió al ataque, pero las próximas horas son decisivas. Necesita seguir internada, con medicinas para desinflamar su cabeza y exámenes urgentes. Ella no puede pedir ayuda sola, nos tiene a nosotros.</p></div><p>Mantenerla internada, pagar los exámenes, las placas y todos los medicamentos del día a día se nos sale por completo de las manos. Solos no podemos cubrirlo.
+Si puedes apoyarnos con un granito de arena, desde $1 dólar, todo va directo a su cuenta en la veterinaria. Y si no puedes aportar dinero, por favor ayúdanos compartiendo este caso para que llegue a más personas. No dejemos que la crueldad gane esta vez.</p></div>
+
+        <!-- ACTUALIZACIONES CRONOLÓGICAS (ESTILO GOFUNDME) -->
+        <div class="updates-section" hidden=""><h2>Actualizaciones (0)</h2></div>
+
+        <!-- OTROS CASOS EN RECUPERACIÓN -->
+        
+
+      </div>
+
+      <!-- COLUMNA LATERAL (DERECHA / STICKY EN PC) -->
+      <div class="sidebar-wrapper">
+        <aside class="donation-card">
+          <div class="amount-raised">
+            <span class="current-amount">$55 USD</span>
+            <span class="target-amount">recaudados de $780</span>
+          </div>
+
+          <div class="progress-track">
+            <div class="progress-bar" style="width: 7.05128%;"></div>
+          </div>
+
+          <div class="stats-row"><span>6 donaciones</span><span>135 veces compartido</span></div>
+
+          <button class="btn-donate-large" onclick="abrirModalDonacion()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+            </svg>
+            <span>DONA AHORA</span>
+          </button>
+
+          <button class="btn-share-large" onclick="compartirCampana()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+              <polyline points="16 6 12 2 8 6"></polyline>
+              <line x1="12" y1="2" x2="12" y2="15"></line>
+            </svg>
+            <span>Compartir campaña</span>
+          </button>
+
+          <!-- DONACIONES RECIENTES EN SIDEBAR -->
+          <div class="sidebar-donors"><div class="sidebar-donors-title">Donaciones recientes</div><div class="sidebar-donor-row"><div class="sidebar-donor-icon">♥</div><div class="sidebar-donor-details"><div class="sidebar-donor-name">María C.</div><div class="sidebar-donor-meta" data-donated-at="2026-11-05T17:31:00.000Z">5 nov 2026</div></div><div class="sidebar-donor-val">$5</div></div><div class="sidebar-donor-row"><div class="sidebar-donor-icon">♥</div><div class="sidebar-donor-details"><div class="sidebar-donor-name">Donante anónimo</div><div class="sidebar-donor-meta" data-donated-at="2026-10-28T16:08:00.000Z">28 oct 2026</div></div><div class="sidebar-donor-val">$5</div></div><div class="sidebar-donor-row"><div class="sidebar-donor-icon">♥</div><div class="sidebar-donor-details"><div class="sidebar-donor-name">Carlos M.</div><div class="sidebar-donor-meta" data-donated-at="2026-10-23T23:52:00.000Z">23 oct 2026</div></div><div class="sidebar-donor-val">$10</div></div><div class="sidebar-donor-row"><div class="sidebar-donor-icon">♥</div><div class="sidebar-donor-details"><div class="sidebar-donor-name">Donante anónimo</div><div class="sidebar-donor-meta" data-donated-at="2026-10-10T13:53:00.000Z">10 oct 2026</div></div><div class="sidebar-donor-val">$20</div></div></div>
+        </aside>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BARRA FIJA MÓVIL (GOFUNDME STYLE MOBILE BOTTOM BAR) -->
+  <div class="mobile-float-bar">
+    <div class="mobile-float-info">
+      <div class="mobile-float-raised">$55 USD</div>
+      <div class="mobile-float-target">de $780 meta</div>
+    </div>
+    <button class="mobile-float-btn" onclick="abrirModalDonacion()">DONA AHORA</button>
+  </div>
+
+  <!-- PIE DE PÁGINA LIMPIO -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-email-box">
+        <div>Envíanos tus comprobantes</div>
+        <div class="footer-email-address">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          <span>donaciones@huellasfelices.com</span>
+        </div>
+      </div>
+
+      <div>
+        <a href="https://www.tiktok.com/@user984030739" target="_blank" rel="noopener" class="tiktok-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.24 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"></path>
+          </svg>
+          <span>Síguenos en TikTok</span>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODAL DE PAGO / CHECKOUT (ESTILO GOFUNDME) -->
+  <div class="modal-overlay" id="donationModal" onclick="cerrarModalFondo(event)">
+    <div class="modal-card">
+      
+      <div class="modal-header">
+        <h3 class="modal-title">Apoyar esta campaña</h3>
+        <button class="btn-close-modal" onclick="cerrarModalDonacion()">×</button>
+      </div>
+
+      <div class="modal-body"><label class="amount-label">Método de aportación</label><div class="payment-tabs"><button id="tab-paypal" class="tab-btn active" onclick="cambiarTab('paypal', this)">PayPal</button>
+          <button id="tab-banco" class="tab-btn" onclick="cambiarTab('banco', this)">Transferencia</button>
+          
+        </div>
+        <p id="no-payment-methods" hidden>Esta campaña aún no tiene métodos de pago configurados.</p>
+        
+        <!-- SELECCIÓN DE MONTO -->
+        <label class="amount-label">Elige un monto sugerido</label>
+        <div class="amount-options">
+          <button class="btn-amt" onclick="seleccionarMonto(5, this)">$5</button>
+          <button class="btn-amt active" onclick="seleccionarMonto(10, this)">$10</button>
+          <button class="btn-amt" onclick="seleccionarMonto(20, this)">$20</button>
+          <button class="btn-amt" onclick="seleccionarMonto(50, this)">$50</button>
+        </div>
+
+        <div class="custom-amt-input-wrap">
+          <span class="currency-sign">$</span>
+          <input type="number" id="customAmount" class="custom-amt-input" value="10" placeholder="Otro monto" oninput="actualizarInputMonto(this.value)">
+        </div>
+
+        <!-- MÉTODOS DE PAGO DISPONIBLES EN ECUADOR -->
+        
+        
+        
+
+        <!-- TAB BANCO GUAYAQUIL -->
+        <div class="tab-panel" id="panel-banco">
+          <div class="bank-card-box">
+            <div class="bank-badge">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                <line x1="2" y1="10" x2="22" y2="10"></line>
+              </svg>
+              <span id="bankName">Banco Guayaquil</span>
+            </div>
+
+            <div class="bank-field-row">
+              <span class="bank-field-label">Tipo de cuenta:</span>
+              <span class="bank-field-val" id="accountType">Ahorros</span>
+            </div>
+
+            <div class="bank-field-row">
+              <div>
+                <div class="bank-field-label">Número de cuenta:</div>
+                <div class="bank-field-val" id="numCuenta">0061248604</div>
+              </div>
+              <button class="btn-copy" onclick="copiarDato(document.getElementById('numCuenta').textContent, 'Número de cuenta copiado')">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copiar</span>
+              </button>
+            </div>
+
+            <div class="bank-field-row">
+              <span class="bank-field-label">Titular:</span>
+              <span class="bank-field-val" id="accountHolder">Katty Villamar</span>
+            </div>
+
+            <div class="bank-field-row">
+              <div>
+                <div class="bank-field-label">Cédula / RUC:</div>
+                <div class="bank-field-val" id="numCedula">1308308707</div>
+              </div>
+              <button class="btn-copy" onclick="copiarDato(document.getElementById('numCedula').textContent, 'Cédula copiada')">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copiar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB PAYPAL (INTERNACIONAL) -->
+        <div class="tab-panel active" id="panel-paypal">
+          <div class="paypal-box">
+            <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 16px;">
+              Para realizar tu donación por PayPal sin que la plataforma nos descuente comisiones, por favor asegúrate de seleccionar la opción "Enviar a amigos y familiares".
+            </p>
+            <a id="paypalDynamicBtn" href="https://paypal.me/huellasfelices15/10" target="_blank" rel="noopener" class="btn-paypal-checkout">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#003087">
+                <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944 3.72a.787.787 0 0 1 .776-.662h6.702c2.25 0 4.015.485 5.247 1.442 1.258.977 1.84 2.457 1.637 4.167-.32 2.684-1.895 4.774-4.555 5.86-1.02.417-2.227.625-3.61.625H8.796a.916.916 0 0 0-.904.772l-.816 5.413z"></path>
+              </svg>
+              <span>Donar vía PayPal</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- AVISO DE COMPROBANTE -->
+        <div class="voucher-notice">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"></path>
+          </svg>
+          <div>Por favor, envía tu comprobante al correo: <strong id="voucherEmail">donaciones@huellasfelices.com</strong>.</div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TOAST FEEDBACK -->
+  <div id="toast" class="toast-msg">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    <span id="toastText">Copiado al portapapeles</span>
+  </div>
+
+  <script>
+    // ESTADO DE MONTO SELECCIONADO
+    let montoActual = 10;
+    let paypalUsername = "huellasfelices15";
+
+    function seleccionarMonto(valor, elemento) {
+      montoActual = valor;
+      document.querySelectorAll('.btn-amt').forEach(btn => btn.classList.remove('active'));
+      if (elemento) elemento.classList.add('active');
+      document.getElementById('customAmount').value = valor;
+      actualizarLinkPaypal(valor);
+    }
+
+    function actualizarInputMonto(valor) {
+      const parsed = parseFloat(valor);
+      if (!isNaN(parsed) && parsed > 0) {
+        montoActual = parsed;
+        document.querySelectorAll('.btn-amt').forEach(btn => btn.classList.remove('active'));
+        actualizarLinkPaypal(parsed);
+      }
+    }
+
+    function actualizarLinkPaypal(monto) {
+      const btn = document.getElementById('paypalDynamicBtn');
+      if (btn) {
+        btn.href = `https://paypal.me/${encodeURIComponent(paypalUsername)}/${monto}`;
+      }
+    }
+
+    // GESTIÓN DE TABS
+    function cambiarTab(tabId, elemento) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+
+      elemento.classList.add('active');
+      document.getElementById('panel-' + tabId).classList.add('active');
+    }
+
+    // MODAL
+    function abrirModalDonacion() {
+      document.getElementById('donationModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function cerrarModalDonacion() {
+      document.getElementById('donationModal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function cerrarModalFondo(e) {
+      if (e.target.id === 'donationModal') {
+        cerrarModalDonacion();
+      }
+    }
+
+    // COPIAR AL PORTAPAPELES (COMPATIBLE CON IFRAME)
+    function copiarDato(texto, mensajeFeedback) {
+      const tempInput = document.createElement('textarea');
+      tempInput.value = texto;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      try {
+        document.execCommand('copy');
+        mostrarToast(mensajeFeedback || 'Copiado al portapapeles');
+      } catch (err) {
+        console.error('Error al copiar:', err);
+      }
+      document.body.removeChild(tempInput);
+    }
+
+    function mostrarToast(texto) {
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toastText');
+      toastText.textContent = texto;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    // COMPARTIR CAMPAÑA
+    function compartirCampana() {
+      if (navigator.share) {
+        navigator.share({
+          title: document.title,
+          text: document.querySelector('meta[name="description"]').content,
+          url: window.location.href,
+        }).catch(() => {});
+      } else {
+        copiarDato(window.location.href, 'Enlace de la campaña copiado para compartir');
+      }
+    }
+  </script>
+
+<script>
+        function actualizarTiemposDonaciones() {
+          document.querySelectorAll('[data-donated-at]').forEach(function (elemento) {
+            const fecha = new Date(elemento.dataset.donatedAt);
+            const minutos = Math.floor((Date.now() - fecha.getTime()) / 60000);
+            if (minutos < 0) { elemento.textContent = 'Fecha: ' + fecha.toLocaleDateString('es', { day: 'numeric', month: 'short', year: 'numeric' }); }
+            else if (minutos < 1) { elemento.textContent = 'Ahora'; }
+            else if (minutos < 60) { elemento.textContent = 'Hace ' + minutos + (minutos === 1 ? ' minuto' : ' minutos'); }
+            else if (minutos < 1440) { const horas = Math.floor(minutos / 60); elemento.textContent = 'Hace ' + horas + (horas === 1 ? ' hora' : ' horas'); }
+            else if (minutos < 10080) { const dias = Math.floor(minutos / 1440); elemento.textContent = 'Hace ' + dias + (dias === 1 ? ' día' : ' días'); }
+            else { elemento.textContent = fecha.toLocaleDateString('es', { day: 'numeric', month: 'short', year: 'numeric' }); }
+          });
+        }
+        actualizarTiemposDonaciones();
+        setInterval(actualizarTiemposDonaciones, 60000);
+        document.querySelectorAll('.gallery-button').forEach(function (boton) {
+          boton.addEventListener('click', function () {
+            const indice = Number(boton.dataset.galleryIndex);
+            document.querySelectorAll('.media-card > img').forEach(function (imagen, i) { imagen.hidden = i !== indice; });
+            document.querySelectorAll('.gallery-button').forEach(function (otro, i) { otro.setAttribute('aria-pressed', String(i === indice)); });
+          });
+        });
+      </script>
+  <script src="../api-config.js"></script>
+  <script>
+    (async function cargarCampanaDesdePanel() {
+      const apiUrl = window.HUELLAS_API_URL;
+      if (!apiUrl || apiUrl.includes('TU-WORKER')) return;
+
+      const header = document.querySelector('.campaign-header');
+      const status = document.createElement('p');
+      status.setAttribute('role', 'status');
+      status.style.cssText = 'margin-top:12px;color:#8a3b18;font-size:14px';
+      try {
+        const response = await fetch(apiUrl.replace(/\/+$/, '') + '/api/campaigns/kira');
+        if (response.status === 404) {
+          status.textContent = 'Este caso aún no está guardado en el panel; se muestra la información de esta página.';
+          header.append(status);
+          return;
+        }
+        if (!response.ok) throw new Error('Error HTTP ' + response.status);
+
+        const campaign = await response.json();
+        const setText = (selector, value) => {
+          const element = document.querySelector(selector);
+          if (element && value !== undefined && value !== null) element.textContent = value;
+        };
+        const money = value => '$' + (Number(value) || 0).toLocaleString('en-US', {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 2
+        });
+        const make = (tag, className, value) => {
+          const element = document.createElement(tag);
+          if (className) element.className = className;
+          element.textContent = value;
+          return element;
+        };
+
+        document.title = campaign.title + ' — ' + (campaign.brand || 'Huellas Felices');
+        paypalUsername = (campaign.paypal || '').trim();
+        const accountNumber = (campaign.accountNumber || '').trim();
+        const paypalTab = document.getElementById('tab-paypal');
+        const bankTab = document.getElementById('tab-banco');
+        paypalTab.hidden = !paypalUsername;
+        bankTab.hidden = !accountNumber;
+        document.querySelector('.payment-tabs').hidden = !paypalUsername && !accountNumber;
+        document.getElementById('no-payment-methods').hidden = !!(paypalUsername || accountNumber);
+        document.querySelectorAll('.tab-btn, .tab-panel').forEach(element => element.classList.remove('active'));
+        if (paypalUsername) {
+          actualizarLinkPaypal(montoActual);
+          cambiarTab('paypal', paypalTab);
+        } else if (accountNumber) {
+          cambiarTab('banco', bankTab);
+        }
+        setText('#bankName', campaign.bankName || 'Transferencia bancaria');
+        setText('#accountType', campaign.accountType || '');
+        setText('#numCuenta', accountNumber);
+        setText('#accountHolder', campaign.accountHolder || '');
+        setText('#numCedula', campaign.accountId || '');
+        ['accountType', 'accountHolder', 'numCedula'].forEach(id => {
+          const field = document.getElementById(id);
+          field.closest('.bank-field-row').hidden = !field.textContent.trim();
+        });
+        setText('#voucherEmail', campaign.email || '');
+        document.querySelector('.voucher-notice').hidden = !campaign.email;
+        setText('.campaign-title', campaign.title);
+        setText('.category-badge span', campaign.status === 'completada' ? 'Caso completado' : campaign.category);
+        setText('.organizer-name > span', campaign.organizer || campaign.brand);
+        setText('.organizer-sub', campaign.organizerDescription || 'Organizador verificado');
+        setText('.organizer-avatar', (campaign.organizer || campaign.brand || 'FH')
+          .split(/\s+/).slice(0, 2).map(word => word[0]).join('').toUpperCase());
+
+        const story = document.querySelector('.story-section');
+        story.replaceChildren(make('h2', '', campaign.storyTitle || 'Su historia'));
+        (campaign.story || '').split(/\n+/).filter(Boolean).forEach(paragraph => story.append(make('p', '', paragraph)));
+        if (campaign.highlight) story.append(make('div', 'callout-box', campaign.highlight));
+        (campaign.storyEnding || '').split(/\n+/).filter(Boolean).forEach(paragraph => story.append(make('p', '', paragraph)));
+
+        const photos = [campaign.photo1, campaign.photo2, campaign.photo3,
+          ...(campaign.additionalPhotos || []).map(photo => photo.url)].filter(Boolean);
+        const media = document.querySelector('.media-card');
+        const gallery = media.querySelector('.gallery-nav');
+        media.querySelectorAll(':scope > img').forEach(image => image.remove());
+        gallery.replaceChildren();
+        photos.forEach((url, index) => {
+          const image = document.createElement('img');
+          image.src = url;
+          image.alt = campaign.photoCaption || campaign.title + ' — foto ' + (index + 1);
+          image.hidden = index !== 0;
+          media.insertBefore(image, gallery);
+          const button = make('button', 'gallery-button', String(index + 1));
+          button.type = 'button';
+          button.setAttribute('aria-label', 'Mostrar foto ' + (index + 1));
+          button.setAttribute('aria-pressed', String(index === 0));
+          button.addEventListener('click', () => {
+            media.querySelectorAll(':scope > img').forEach((photo, photoIndex) => { photo.hidden = photoIndex !== index; });
+            gallery.querySelectorAll('button').forEach((other, buttonIndex) =>
+              other.setAttribute('aria-pressed', String(buttonIndex === index)));
+          });
+          gallery.append(button);
+        });
+        if (campaign.photoCaption) setText('.media-badge', campaign.photoCaption);
+
+        const raised = money(campaign.raised);
+        const goal = money(campaign.goal);
+        setText('.current-amount', raised + ' USD');
+        setText('.target-amount', 'recaudados de ' + goal);
+        document.querySelector('.progress-bar').style.width =
+          Math.min(100, (Number(campaign.raised) || 0) / Math.max(1, Number(campaign.goal) || 0) * 100) + '%';
+        setText('.stats-row span:first-child', (campaign.donationCount || '0') + ' donaciones');
+        setText('.stats-row span:last-child', (campaign.shareCount || '0') + ' veces compartido');
+        setText('.mobile-float-raised', raised + ' USD');
+        setText('.mobile-float-target', 'de ' + goal + ' meta');
+
+        const donors = document.querySelector('.sidebar-donors');
+        donors.replaceChildren(make('div', 'sidebar-donors-title', 'Donaciones recientes'));
+        (campaign.donors || []).slice().reverse().slice(0, 5).forEach(donor => {
+          const row = make('div', 'sidebar-donor-row', '');
+          const icon = make('div', 'sidebar-donor-icon', '♥');
+          const details = make('div', 'sidebar-donor-details', '');
+          details.append(make('div', 'sidebar-donor-name', donor.name || 'Donante anónimo'));
+          const date = make('div', 'sidebar-donor-meta', '');
+          if (donor.date) {
+            date.dataset.donatedAt = donor.date;
+            date.textContent = new Date(donor.date).toLocaleDateString('es', { day: 'numeric', month: 'short', year: 'numeric' });
+          }
+          details.append(date);
+          row.append(icon, details, make('div', 'sidebar-donor-val', money(donor.amount)));
+          donors.append(row);
+        });
+        document.querySelectorAll('[data-donated-at]').forEach(element => {
+          const date = new Date(element.dataset.donatedAt);
+          if (!Number.isNaN(date.getTime())) element.textContent =
+            date.toLocaleDateString('es', { day: 'numeric', month: 'short', year: 'numeric' });
+        });
+
+        const updates = document.querySelector('.updates-section');
+        updates.replaceChildren(make('h2', '', 'Actualizaciones (' + (campaign.updates || []).length + ')'));
+        (campaign.updates || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || '')).forEach(update => {
+          const entry = make('article', 'update-card', '');
+          const updateHeader = make('div', 'update-header', '');
+          updateHeader.append(make('span', 'update-tag', 'Actualización'));
+          if (update.date) {
+            const date = make('time', 'update-date', new Date(update.date + 'T12:00:00').toLocaleDateString('es'));
+            date.dateTime = update.date;
+            updateHeader.append(date);
+          }
+          entry.append(updateHeader,
+            make('h3', 'update-title', update.title || 'Actualización'),
+            make('p', 'update-desc', update.description || ''));
+          updates.append(entry);
+        });
+        updates.hidden = !(campaign.updates || []).length;
+
+        if (campaign.status === 'completada') {
+          document.querySelector('.nav-actions .btn-nav-donate').hidden = true;
+          document.querySelector('.mobile-float-bar').hidden = true;
+          const card = document.querySelector('.donation-card');
+          card.replaceChildren(
+            make('span', 'completed-badge', 'Caso completado'),
+            make('div', 'completed-goal', raised + ' USD'),
+            make('p', 'completed-copy', 'recaudados de ' + goal + ' USD')
+          );
+        }
+      } catch (error) {
+        status.textContent = 'No se pudieron cargar los datos actualizados del panel. ' + error.message;
+        header.append(status);
+      }
+    })();
+  </script>
+  </body></html>

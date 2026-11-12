@@ -1,0 +1,163 @@
+const JSON_HEADERS = { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' };
+
+function response(body, status = 200, headers = {}) {
+  return new Response(JSON.stringify(body), { status, headers: { ...JSON_HEADERS, ...headers } });
+}
+
+function corsHeaders(request, env) {
+  const allowed = (env.ALLOWED_ORIGINS || '').split(',').map(origin => origin.trim()).filter(Boolean);
+  const origin = request.headers.get('Origin');
+  if (origin && allowed.length && !allowed.includes(origin)) throw new Error('Origen no autorizado.');
+  return {
+    ...(origin && allowed.includes(origin) ? { 'Access-Control-Allow-Origin': origin } : {}),
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Authorization, Content-Type',
+    'Access-Control-Max-Age': '86400',
+    'Vary': 'Origin'
+  };
+}
+
+function authorized(request, env) {
+  const expected = env.ADMIN_TOKEN || '';
+  const supplied = (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
+  if (!expected || supplied.length !== expected.length) return false;
+  let mismatch = 0;
+  for (let index = 0; index < expected.length; index++) mismatch |= expected.charCodeAt(index) ^ supplied.charCodeAt(index);
+  return mismatch === 0;
+}
+
+function validateCampaign(campaign) {
+  if (!campaign || typeof campaign !== 'object' ||
+    typeof campaign.id !== 'string' || !campaign.id ||
+    typeof campaign.slug !== 'string' || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(campaign.slug) ||
+    !['vigente', 'completada'].includes(campaign.status) ||
+    typeof campaign.title !== 'string' || !campaign.title.trim()) {
+    throw new Error('La campaña debe tener identificador, nombre de enlace, título y estado válidos.');
+  }
+  campaign.showHome = 'si';
+}
+
+const DONATION_FIELDS = [
+  'bankName', 'accountType', 'accountNumber', 'accountHolder', 'accountId',
+  'deunaQr', 'deunaUrl', 'paypalUrl', 'tiktokUrl'
+];
+const DONATION_URL_FIELDS = ['deunaQr', 'deunaUrl', 'paypalUrl', 'tiktokUrl'];
+
+function validateDonationSettings(settings) {
+  if (!settings || typeof settings !== 'object' || Array.isArray(settings)) {
+    throw new Error('Los datos de donación no son válidos.');
+  }
+  const clean = {};
+  for (const field of DONATION_FIELDS) {
+    if (typeof settings[field] !== 'string' || settings[field].length > 2048) {
+      throw new Error('El campo ' + field + ' no es válido.');
+    }
+    clean[field] = settings[field].trim();
+    if (DONATION_URL_FIELDS.includes(field) && clean[field]) {
+      let url;
+      try { url = new URL(clean[field]); } catch { throw new Error('El enlace ' + field + ' no es válido.'); }
+      if (url.protocol !== 'https:' || url.username || url.password) {
+        throw new Error('El enlace ' + field + ' debe usar HTTPS y no contener credenciales.');
+      }
+    }
+  }
+  return clean;
+}
+
+async function handle(request, env) {
+  const url = new URL(request.url);
+  const path = url.pathname.replace(/\/+$/, '') || '/';
+  const headers = corsHeaders(request, env);
+  if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers });
+  if (!env.DB) return response({ error: 'Falta enlazar la base de datos D1 en wrangler.toml.' }, 503, headers);
+
+  if (path === '/api/donation-settings' && request.method === 'GET') {
+    const result = await env.DB.prepare('SELECT payload FROM donation_settings WHERE id = 1').first();
+    return response(result ? JSON.parse(result.payload) : {}, 200, headers);
+  }
+
+  if (path === '/api/campaigns' && request.method === 'GET') {
+    const result = await env.DB.prepare(
+      'SELECT payload FROM campaigns ORDER BY CASE status WHEN ? THEN 0 ELSE 1 END, created_at'
+    ).bind('vigente').all();
+    return response({ campaigns: result.results.map(row => JSON.parse(row.payload)) }, 200, headers);
+  }
+
+  const campaignPath = path.match(/^\/api\/campaigns\/([a-z0-9-]+)$/);
+  const adminCampaignPath = path.match(/^\/api\/admin\/campaigns\/([^/]+)$/);
+  if (campaignPath && request.method === 'GET') {
+    const result = await env.DB.prepare(
+      'SELECT payload FROM campaigns WHERE slug = ?'
+    ).bind(campaignPath[1]).first();
+    return result ? response(JSON.parse(result.payload), 200, headers) :
+      response({ error: 'No se encontró esta campaña.' }, 404, headers);
+  }
+
+  if (!authorized(request, env)) return response({ error: 'No autorizado. Revisa la clave de administración.' }, 401, headers);
+
+  if (path === '/api/admin/donation-settings' && request.method === 'PUT') {
+    let settings;
+    try {
+      settings = validateDonationSettings(await request.json());
+    } catch (error) {
+      return response({ error: error.message }, 400, headers);
+    }
+    await env.DB.prepare(
+      'INSERT INTO donation_settings (id, payload, updated_at) VALUES (1, ?, ?) ' +
+      'ON CONFLICT(id) DO UPDATE SET payload=excluded.payload, updated_at=excluded.updated_at'
+    ).bind(JSON.stringify(settings), new Date().toISOString()).run();
+    return response(settings, 200, headers);
+  }
+
+  if (path === '/api/admin/campaigns' && request.method === 'GET') {
+    const result = await env.DB.prepare('SELECT payload FROM campaigns ORDER BY created_at').all();
+    return response({ campaigns: result.results.map(row => JSON.parse(row.payload)) }, 200, headers);
+  }
+
+  if (path === '/api/admin/campaigns' && request.method === 'POST') {
+    const campaign = await request.json();
+    validateCampaign(campaign);
+    await env.DB.prepare(
+      'INSERT INTO campaigns (id, slug, status, show_home, payload, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?) ' +
+      'ON CONFLICT(id) DO UPDATE SET slug=excluded.slug, status=excluded.status, show_home=excluded.show_home, payload=excluded.payload, updated_at=excluded.updated_at'
+    ).bind(campaign.id, campaign.slug, campaign.status, 'si', JSON.stringify(campaign),
+      new Date().toISOString(), new Date().toISOString()).run();
+    return response({ campaign }, 201, headers);
+  }
+
+  if (adminCampaignPath && request.method === 'PUT') {
+    const campaign = await request.json();
+    validateCampaign(campaign);
+    if (campaign.id !== adminCampaignPath[1]) return response({ error: 'El identificador no coincide con la ruta.' }, 400, headers);
+    const result = await env.DB.prepare(
+      'UPDATE campaigns SET slug=?, status=?, show_home=?, payload=?, updated_at=? WHERE id=?'
+    ).bind(campaign.slug, campaign.status, 'si', JSON.stringify(campaign),
+      new Date().toISOString(), campaign.id).run();
+    if (!result.meta.changes) return response({ error: 'No se encontró la campaña para actualizar.' }, 404, headers);
+    return response({ campaign }, 200, headers);
+  }
+
+  if (adminCampaignPath && request.method === 'DELETE') {
+    const result = await env.DB.prepare('DELETE FROM campaigns WHERE id=?').bind(adminCampaignPath[1]).run();
+    if (!result.meta.changes) return response({ error: 'No se encontró la campaña para eliminar.' }, 404, headers);
+    return response({ deleted: adminCampaignPath[1] }, 200, headers);
+  }
+
+  return response({ error: 'Ruta no encontrada.' }, 404, headers);
+}
+
+export default {
+  async fetch(request, env) {
+    try {
+      return await handle(request, env);
+    } catch (error) {
+      let headers = {};
+      try {
+        headers = corsHeaders(request, env);
+      } catch (originError) {
+        return response({ error: originError.message }, 403);
+      }
+      return response({ error: error.message || 'Error del servicio de campañas.' }, 500, headers);
+    }
+  }
+};
