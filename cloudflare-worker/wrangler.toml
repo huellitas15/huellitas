@@ -12,4 +12,4 @@ database_name = "huellas-campanas"
 database_id = "b2813019-a60a-474d-9a7c-c96b8c9acc93"
 
 [vars]
-ALLOWED_ORIGINS = "https://huellitas15.github.io"
+ALLOWED_ORIGINS = "https://huellitas15.github.io,https://huellas-felices.org,https://www.huellas-felices.org"
