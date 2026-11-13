@@ -107,6 +107,9 @@
     .btn-deuna:hover { background: linear-gradient(135deg, #4b2378, #2f144f); }
     .btn-paypal { background: #0070ba; }
     .btn-paypal:hover { background: #005ea6; }
+    .receipt-note { display: flex; align-items: flex-start; gap: 10px; margin: 20px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .receipt-note svg { flex: 0 0 20px; width: 20px; height: 20px; fill: none; stroke: var(--green-dark); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .receipt-note a { color: #006f3c; font-weight: 700; overflow-wrap: anywhere; text-decoration: underline; }
     .angel-section { margin-bottom: 22px; padding-bottom: 22px; border-bottom: 1px solid var(--border); }
     .method-step { margin: 0 0 12px; font-size: 16px; line-height: 1.3; letter-spacing: -.02em; }
     #paso-2 { scroll-margin-top: 85px; }
@@ -299,6 +302,10 @@
 
     </div>
 
+    <p class="receipt-note">
+      <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg>
+      <span>Envíanos tu comprobante a <a href="mailto:donaciones@huellasfelices.com">donaciones@huellasfelices.com</a></span>
+    </p>
       </section>
       <section class="share-card" aria-labelledby="share-title">
         <h2 id="share-title">No puedo donar hoy, pero quiero ayudar</h2>
