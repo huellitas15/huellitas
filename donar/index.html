@@ -94,6 +94,7 @@
     .info-text small, .info-text strong { display: block; }
     .info-text small { color: var(--muted); font-size: 12px; }
     .info-text strong { font-size: 14px; overflow-wrap: anywhere; }
+    .holder-role { display: inline-block; margin-top: 3px; padding: 2px 8px; border-radius: 6px; background: var(--green-soft); color: var(--green-dark); font-size: 11px; font-weight: 600; }
     .btn-copy { flex-shrink: 0; padding: 6px 10px; border: 1px solid #b6dcc8; border-radius: 8px; background: #fff; color: var(--green-dark); font-size: 12px; font-weight: 700; cursor: pointer; }
     .btn-copy:hover { background: var(--green-soft); }
     .btn-copy.copied { border-color: var(--green-dark); background: var(--green-dark); color: #fff; }
@@ -119,6 +120,11 @@
     .angel-amount:hover { border-color: #9ed5b9; }
     .angel-amount[aria-pressed="true"] { border-color: var(--green-dark); background: var(--green-soft); color: var(--green-dark); }
     .angel-amount svg, .angel-message svg { flex: 0 0 20px; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .custom-amount-row { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 48px; margin-top: 10px; padding: 8px 14px; border: 1px solid var(--border); border-radius: 10px; background: #fff; transition: border-color .2s, background-color .2s; }
+    .custom-amount-row:focus-within, .custom-amount-row.is-active { border-color: var(--green-dark); background: var(--green-soft); }
+    .custom-amount-row .currency { font-size: 16px; font-weight: 700; color: var(--green-dark); }
+    .custom-amount-row input { width: 100%; border: 0; outline: none; background: transparent; font: inherit; font-size: 15px; font-weight: 700; color: var(--ink); }
+    .custom-amount-row input::placeholder { font-weight: 500; color: var(--muted); }
     .angel-message { display: flex; align-items: flex-start; gap: 10px; margin-top: 10px; padding: 12px; border-radius: 10px; background: #f3faf6; color: #29543c; font-size: 13px; line-height: 1.5; }
     .angel-message p { margin: 0; }
     .share-card { padding: 24px 28px; border: 1px solid var(--border); border-radius: 16px; background: #fff; }
@@ -185,128 +191,135 @@
       </div>
 
       <section class="methods-panel" id="metodos" aria-labelledby="methods-title">
-    <h2 id="methods-title">Cómo donar</h2>
-    <section class="angel-section" aria-labelledby="angel-title">
-      <h3 id="angel-title" class="method-step">Paso 1: Selecciona un monto</h3>
-      <svg class="angel-icons" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
-        <symbol id="angel-food" viewBox="0 0 24 24"><path d="M3 12h18l-1.5 6h-15zM7 8c0-1 1-1 1-2M12 8c0-1 1-1 1-2M17 8c0-1 1-1 1-2"></path><path d="M7 21h10"></path></symbol>
-        <symbol id="angel-vitamin" viewBox="0 0 24 24"><path d="M10 4a5 5 0 0 1 7 7l-6 6a5 5 0 0 1-7-7zM7 7l7 7"></path></symbol>
-        <symbol id="angel-care" viewBox="0 0 24 24"><path d="M6 3v5a4 4 0 0 0 8 0V3M4 3h4M12 3h4M10 12v3a5 5 0 0 0 10 0v-1"></path><circle cx="20" cy="12" r="2"></circle></symbol>
-      </svg>
-      <div class="angel-amounts" role="group" aria-label="Montos sugeridos">
-        <button class="angel-amount" type="button" aria-pressed="false" data-icon="#angel-food" data-message="Un aporte de $3 puede ayudar con alimento."><svg aria-hidden="true"><use href="#angel-food"></use></svg><span>$3</span></button>
-        <button class="angel-amount" type="button" aria-pressed="false" data-icon="#angel-vitamin" data-message="Un aporte de $5 puede ayudar con vitaminas."><svg aria-hidden="true"><use href="#angel-vitamin"></use></svg><span>$5</span></button>
-        <button class="angel-amount" type="button" aria-pressed="false" data-icon="#angel-care" data-message="Un aporte de $15 puede contribuir a la atención veterinaria."><svg aria-hidden="true"><use href="#angel-care"></use></svg><span>$15</span></button>
-      </div>
-      <div class="angel-message" role="status">
-        <svg aria-hidden="true"><use id="angel-message-icon" href="#angel-food"></use></svg>
-        <p id="angel-message-text">Un aporte de $3 puede ayudar con alimento.</p>
-      </div>
-    </section>
-
-    <h3 id="paso-2" class="method-step">Paso 2: Elige una vía de donación</h3>
-    <p id="donation-status" class="status" role="status">Cargando métodos de donación…</p>
-    <p id="copy-status" class="status" role="status"></p>
-    <div class="accordion-group">
-
-      <!-- 1. Banco Pichincha -->
-      <div class="accordion-item" id="bank-method" hidden>
-        <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">
-          <div class="header-left">
-            <span class="icon-pill" aria-hidden="true"><img src="https://www.pichincha.com/themes/custom/pichincha_theme/logo.svg" alt=""></span>
-            <div class="header-titles">
-              <strong id="bank-name">Transferencia bancaria</strong>
-              <span id="bank-type">Transferencia directa</span>
-            </div>
-          </div>
-          <svg class="chevron" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+        <h2 id="methods-title">Cómo donar</h2>
+        <section class="angel-section" aria-labelledby="angel-title">
+          <h3 id="angel-title" class="method-step">Paso 1: Selecciona un monto</h3>
+          <svg class="angel-icons" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+            <symbol id="angel-food" viewBox="0 0 24 24"><path d="M3 12h18l-1.5 6h-15zM7 8c0-1 1-1 1-2M12 8c0-1 1-1 1-2M17 8c0-1 1-1 1-2"></path><path d="M7 21h10"></path></symbol>
+            <symbol id="angel-vitamin" viewBox="0 0 24 24"><path d="M10 4a5 5 0 0 1 7 7l-6 6a5 5 0 0 1-7-7zM7 7l7 7"></path></symbol>
+            <symbol id="angel-care" viewBox="0 0 24 24"><path d="M6 3v5a4 4 0 0 0 8 0V3M4 3h4M12 3h4M10 12v3a5 5 0 0 0 10 0v-1"></path><circle cx="20" cy="12" r="2"></circle></symbol>
+            <symbol id="angel-heart" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.5-9A5.5 5.5 0 0 1 12 6.5 5.5 5.5 0 0 1 21.5 12c-2.5 4.6-9.5 9-9.5 9z"></path></symbol>
           </svg>
-        </button>
+          <div class="angel-amounts" role="group" aria-label="Montos sugeridos">
+            <button class="angel-amount" type="button" aria-pressed="false" data-amount="3" data-icon="#angel-food" data-message="Un aporte de $3 puede ayudar con alimento."><svg aria-hidden="true"><use href="#angel-food"></use></svg><span>$3</span></button>
+            <button class="angel-amount" type="button" aria-pressed="false" data-amount="5" data-icon="#angel-vitamin" data-message="Un aporte de $5 puede ayudar con vitaminas."><svg aria-hidden="true"><use href="#angel-vitamin"></use></svg><span>$5</span></button>
+            <button class="angel-amount" type="button" aria-pressed="false" data-amount="15" data-icon="#angel-care" data-message="Un aporte de $15 puede contribuir a la atención veterinaria."><svg aria-hidden="true"><use href="#angel-care"></use></svg><span>$15</span></button>
+          </div>
+          <label class="custom-amount-row" id="custom-amount-row" for="custom-amount-input">
+            <span class="currency">$</span>
+            <input id="custom-amount-input" type="number" min="1" step="any" inputmode="decimal" placeholder="O ingresa otro monto libre" aria-label="Monto libre en dólares">
+          </label>
+          <div class="angel-message" role="status">
+            <svg aria-hidden="true"><use id="angel-message-icon" href="#angel-food"></use></svg>
+            <p id="angel-message-text">Un aporte de $3 puede ayudar con alimento.</p>
+          </div>
+        </section>
 
-        <div class="accordion-content">
-          <div class="info-box" id="bank-account-row" hidden>
-            <div class="info-text">
-              <small>Número de cuenta</small>
-              <strong id="cuenta"></strong>
+        <h3 id="paso-2" class="method-step">Paso 2: Elige una vía de donación</h3>
+        <p id="donation-status" class="status" role="status">Cargando métodos de donación…</p>
+        <p id="copy-status" class="status" role="status"></p>
+        <div class="accordion-group">
+
+          <!-- 1. Banco Pichincha -->
+          <div class="accordion-item" id="bank-method" hidden>
+            <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">
+              <div class="header-left">
+                <span class="icon-pill" aria-hidden="true"><img src="https://www.pichincha.com/themes/custom/pichincha_theme/logo.svg" alt=""></span>
+                <div class="header-titles">
+                  <strong id="bank-name">Transferencia bancaria</strong>
+                  <span id="bank-type">Transferencia directa</span>
+                </div>
+              </div>
+              <svg class="chevron" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <div class="accordion-content">
+              <div class="info-box" id="bank-account-row" hidden>
+                <div class="info-text">
+                  <small>Número de cuenta</small>
+                  <strong id="cuenta"></strong>
+                </div>
+                <button type="button" class="btn-copy" data-copy="cuenta" aria-label="Copiar número de cuenta">Copiar</button>
+              </div>
+
+              <div class="info-box" id="bank-id-row" hidden>
+                <div class="info-text">
+                  <small id="bank-id-label">Cédula</small>
+                  <strong id="cedula"></strong>
+                </div>
+                <button type="button" class="btn-copy" data-copy="cedula" aria-label="Copiar identificación">Copiar</button>
+              </div>
+
+              <div class="info-box" id="bank-holder-row" hidden>
+                <div class="info-text">
+                  <small>Titular</small>
+                  <strong id="bank-holder"></strong>
+                  <span class="holder-role">Fundadora y rescatista principal</span>
+                </div>
+                <button type="button" class="btn-copy" data-copy="bank-holder" aria-label="Copiar titular">Copiar</button>
+              </div>
             </div>
-            <button type="button" class="btn-copy" data-copy="cuenta" aria-label="Copiar número de cuenta">Copiar</button>
           </div>
 
-          <div class="info-box" id="bank-id-row" hidden>
-            <div class="info-text">
-              <small id="bank-id-label">Cédula</small>
-              <strong id="cedula"></strong>
+          <!-- 2. De Una -->
+          <div class="accordion-item" id="deuna-method" hidden>
+            <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">
+              <div class="header-left">
+                <span class="icon-pill" aria-hidden="true"><img src="https://www.deuna.ec/assets/images/icon-deuna.png" alt=""></span>
+                <div class="header-titles">
+                  <strong>Deuna!</strong>
+                  <span>Escanea el QR o abre el enlace</span>
+                </div>
+              </div>
+              <svg class="chevron" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <div class="accordion-content">
+              <div class="qr-area">
+                <div class="qr-frame" id="qr-frame" hidden>
+                  <img id="deuna-qr" alt="QR Deuna" />
+                </div>
+                <p id="qr-error" role="status" hidden>No se pudo cargar el QR de Deuna.</p>
+                <a id="deuna-link" class="btn-link btn-deuna" target="_blank" rel="noopener" hidden>Abrir Deuna</a>
+              </div>
             </div>
-            <button type="button" class="btn-copy" data-copy="cedula" aria-label="Copiar identificación">Copiar</button>
           </div>
 
-          <div class="info-box" id="bank-holder-row" hidden>
-            <div class="info-text">
-              <small>Titular</small>
-              <strong id="bank-holder"></strong>
+          <!-- 3. PayPal -->
+          <div class="accordion-item" id="paypal-method" hidden>
+            <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">
+              <div class="header-left">
+                <span class="icon-pill" aria-hidden="true"><img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt=""></span>
+                <div class="header-titles">
+                  <strong>PayPal</strong>
+                  <span>Aportes internacionales o tarjeta</span>
+                </div>
+              </div>
+              <svg class="chevron" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <div class="accordion-content">
+              <p style="font-size: 0.84rem; color: var(--text-soft); margin-bottom: 12px; text-align: center;">
+                Apóyanos desde cualquier parte del mundo de forma rápida y segura:
+              </p>
+              <a id="paypal-link" class="btn-link btn-paypal" target="_blank" rel="noopener">Donar con PayPal</a>
             </div>
-            <button type="button" class="btn-copy" data-copy="bank-holder" aria-label="Copiar titular">Copiar</button>
           </div>
+
         </div>
-      </div>
 
-      <!-- 2. De Una -->
-      <div class="accordion-item" id="deuna-method" hidden>
-        <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">
-          <div class="header-left">
-            <span class="icon-pill" aria-hidden="true"><img src="https://www.deuna.ec/assets/images/icon-deuna.png" alt=""></span>
-            <div class="header-titles">
-              <strong>Deuna!</strong>
-              <span>Escanea el QR o abre el enlace</span>
-            </div>
-          </div>
-          <svg class="chevron" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
-
-        <div class="accordion-content">
-          <div class="qr-area">
-            <div class="qr-frame" id="qr-frame" hidden>
-              <img id="deuna-qr" alt="QR Deuna" />
-            </div>
-            <p id="qr-error" role="status" hidden>No se pudo cargar el QR de Deuna.</p>
-            <a id="deuna-link" class="btn-link btn-deuna" target="_blank" rel="noopener" hidden>Abrir Deuna</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- 3. PayPal -->
-      <div class="accordion-item" id="paypal-method" hidden>
-        <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">
-          <div class="header-left">
-            <span class="icon-pill" aria-hidden="true"><img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt=""></span>
-            <div class="header-titles">
-              <strong>PayPal</strong>
-              <span>Aportes internacionales o tarjeta</span>
-            </div>
-          </div>
-          <svg class="chevron" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
-
-        <div class="accordion-content">
-          <p style="font-size: 0.84rem; color: var(--text-soft); margin-bottom: 12px; text-align: center;">
-            Apóyanos desde cualquier parte del mundo de forma rápida y segura:
-          </p>
-          <a id="paypal-link" class="btn-link btn-paypal" target="_blank" rel="noopener">Donar con PayPal</a>
-        </div>
-      </div>
-
-    </div>
-
-    <p class="receipt-note">
-      <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg>
-      <span>Envíanos tu comprobante a <a href="mailto:donaciones@huellasfelices.com">donaciones@huellasfelices.com</a></span>
-    </p>
+        <p class="receipt-note">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg>
+          <span>Envíanos tu comprobante a <a href="mailto:donaciones@huellasfelices.com">donaciones@huellasfelices.com</a></span>
+        </p>
       </section>
+
       <section class="share-card" aria-labelledby="share-title">
         <h2 id="share-title">No puedo donar hoy, pero quiero ayudar</h2>
         <p>Al compartir nuestra causa, ayudas a que más personas conozcan y apoyen a nuestros peluditos.</p>
@@ -432,15 +445,42 @@
       }
     });
 
-    document.querySelectorAll('.angel-amount').forEach(button => button.addEventListener('click', () => {
-      document.querySelectorAll('.angel-amount').forEach(option => option.setAttribute('aria-pressed', String(option === button)));
-      document.getElementById('angel-message-text').textContent = button.dataset.message;
-      document.getElementById('angel-message-icon').setAttribute('href', button.dataset.icon);
+    const amountButtons = Array.from(document.querySelectorAll('.angel-amount'));
+    const customRow = document.getElementById('custom-amount-row');
+    const customInput = document.getElementById('custom-amount-input');
+    const angelMsgText = document.getElementById('angel-message-text');
+    const angelMsgIcon = document.getElementById('angel-message-icon');
+
+    amountButtons.forEach(button => button.addEventListener('click', () => {
+      amountButtons.forEach(option => option.setAttribute('aria-pressed', String(option === button)));
+      customInput.value = '';
+      customRow.classList.remove('is-active');
+      angelMsgText.textContent = button.dataset.message;
+      angelMsgIcon.setAttribute('href', button.dataset.icon);
       document.getElementById('paso-2').scrollIntoView({
         behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
         block: 'start'
       });
     }));
+
+    customInput.addEventListener('input', () => {
+      const val = parseFloat(customInput.value);
+      const presetMatch = amountButtons.find(btn => Number(btn.dataset.amount) === val);
+
+      amountButtons.forEach(option => option.setAttribute('aria-pressed', String(option === presetMatch)));
+      customRow.classList.toggle('is-active', val > 0);
+
+      if (presetMatch) {
+        angelMsgIcon.setAttribute('href', presetMatch.dataset.icon);
+        angelMsgText.textContent = presetMatch.dataset.message;
+      } else if (val > 0) {
+        angelMsgIcon.setAttribute('href', '#angel-heart');
+        angelMsgText.textContent = `Tu aporte de $${val} ayudará directamente al cuidado y rescate de nuestros peluditos.`;
+      } else {
+        angelMsgIcon.setAttribute('href', '#angel-food');
+        angelMsgText.textContent = 'Un aporte de $3 puede ayudar con alimento.';
+      }
+    });
 
     // Abre una opción y cierra las demás para mantener la vista limpia
     function toggleAccordion(button) {
