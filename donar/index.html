@@ -238,10 +238,34 @@
             <div class="accordion-content">
               <div class="info-box" id="bank-account-row" hidden>
                 <div class="info-text">
-                  <small>Número de cuenta</small>
+                  <small id="bank-account-label">Número de cuenta</small>
                   <strong id="cuenta"></strong>
                 </div>
                 <button type="button" class="btn-copy" data-copy="cuenta" aria-label="Copiar número de cuenta">Copiar</button>
+              </div>
+
+              <div class="info-box" id="clabe-row" hidden>
+                <div class="info-text">
+                  <small>CLABE interbancaria</small>
+                  <strong id="clabe"></strong>
+                </div>
+                <button type="button" class="btn-copy" data-copy="clabe" aria-label="Copiar CLABE interbancaria">Copiar</button>
+              </div>
+
+              <div class="info-box" id="routing-ach-row" hidden>
+                <div class="info-text">
+                  <small>Número de ruta ACH</small>
+                  <strong id="routing-ach"></strong>
+                </div>
+                <button type="button" class="btn-copy" data-copy="routing-ach" aria-label="Copiar número de ruta ACH">Copiar</button>
+              </div>
+
+              <div class="info-box" id="routing-wire-row" hidden>
+                <div class="info-text">
+                  <small>Número de ruta Wire</small>
+                  <strong id="routing-wire"></strong>
+                </div>
+                <button type="button" class="btn-copy" data-copy="routing-wire" aria-label="Copiar número de ruta Wire">Copiar</button>
               </div>
 
               <div class="info-box" id="bank-id-row" hidden>
@@ -256,7 +280,7 @@
                 <div class="info-text">
                   <small>Titular</small>
                   <strong id="bank-holder"></strong>
-                  <span class="holder-role">Fundadora y rescatista principal</span>
+                  <span id="holder-role" class="holder-role">Fundadora y rescatista principal</span>
                 </div>
                 <button type="button" class="btn-copy" data-copy="bank-holder" aria-label="Copiar titular">Copiar</button>
               </div>
@@ -517,9 +541,14 @@
       try {
         const api = window.HUELLAS_API_URL || '';
         if (!api || api.includes('TU-WORKER')) throw new Error('La conexión a las donaciones aún no está configurada.');
-        const response = await fetch(api.replace(/\/+$/, '') + '/api/donation-settings');
+        const requestedCountry = new URLSearchParams(window.location.search).get('country');
+        const countryQuery = ['EC', 'MX', 'US'].includes(requestedCountry)
+          ? '?country=' + encodeURIComponent(requestedCountry) : '';
+        const response = await fetch(api.replace(/\/+$/, '') + '/api/donation-settings' + countryQuery);
         if (!response.ok) throw new Error('Error HTTP ' + response.status);
         const settings = await response.json();
+        const country = Object.prototype.hasOwnProperty.call(settings, 'clabe') ? 'MX' :
+          Object.prototype.hasOwnProperty.call(settings, 'routingAch') ? 'US' : 'EC';
         const safeUrl = value => {
           if (!value) return '';
           const url = new URL(value);
@@ -529,9 +558,15 @@
         const qr = safeUrl(settings.deunaQr);
         const deuna = safeUrl(settings.deunaUrl);
         const paypal = safeUrl(settings.paypalUrl);
-        if (settings.accountNumber) {
+        const bankAccount = settings.accountNumber;
+        const hasBank = country === 'EC' ? Boolean(settings.accountNumber) :
+          country === 'MX' ? Boolean(settings.clabe) :
+            Boolean(settings.accountNumber || settings.routingAch || settings.routingWire);
+        if (hasBank) {
           document.getElementById('bank-name').textContent = settings.bankName || 'Transferencia bancaria';
-          document.getElementById('bank-type').textContent = settings.accountType || 'Transferencia directa';
+          document.getElementById('bank-type').textContent = country === 'MX'
+            ? 'CLABE interbancaria'
+            : settings.accountType || (country === 'US' ? 'Checking' : 'Transferencia directa');
           document.getElementById('bank-id-label').textContent = settings.accountIdType === 'ruc' ? 'RUC' : 'Cédula';
           [['cuenta', 'bank-account-row', settings.accountNumber],
             ['cedula', 'bank-id-row', settings.accountId],
@@ -539,6 +574,15 @@
             document.getElementById(id).textContent = value || '';
             document.getElementById(row).hidden = !value;
           });
+          document.getElementById('bank-account-row').hidden = !bankAccount;
+          document.getElementById('bank-id-row').hidden = country !== 'EC' || !settings.accountId;
+          document.getElementById('clabe').textContent = country === 'MX' ? settings.clabe || '' : '';
+          document.getElementById('clabe-row').hidden = country !== 'MX' || !settings.clabe;
+          document.getElementById('routing-ach').textContent = settings.routingAch || '';
+          document.getElementById('routing-ach-row').hidden = country !== 'US' || !settings.routingAch;
+          document.getElementById('routing-wire').textContent = settings.routingWire || '';
+          document.getElementById('routing-wire-row').hidden = country !== 'US' || !settings.routingWire;
+          document.getElementById('holder-role').hidden = country !== 'EC';
           document.getElementById('bank-method').hidden = false;
           toggleAccordion(document.querySelector('#bank-method .accordion-header'));
         }
@@ -563,7 +607,7 @@
           document.getElementById('paypal-link').href = paypal;
           document.getElementById('paypal-method').hidden = false;
         }
-        status.textContent = settings.accountNumber || qr || deuna || paypal
+        status.textContent = hasBank || qr || deuna || paypal
           ? '' : 'Aún no hay métodos de donación configurados.';
         status.hidden = !status.textContent;
       } catch (error) {
