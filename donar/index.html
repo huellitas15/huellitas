@@ -69,16 +69,27 @@
     .accordion-item.active { border-color: #9ed5b9; }
     .accordion-header { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 12px; padding: 16px; border: 0; background: transparent; color: inherit; text-align: left; cursor: pointer; }
     .accordion-header:hover { background: #f7fbf8; }
-    #bank-method .accordion-header { background: #ffdd00; color: #0f265c; }
-    #bank-method .accordion-header:hover { background: #f2d200; }
+    #bank-method { --bank-bg: var(--green-soft); --bank-hover: #d6f1e4; --bank-ink: var(--green-dark); }
+    #bank-method[data-bank="pichincha"] { --bank-bg: #ffdd00; --bank-hover: #f2d200; --bank-ink: #0f265c; }
+    #bank-method[data-bank="guayaquil"] { --bank-bg: #a80058; --bank-hover: #870047; --bank-ink: #fff; }
+    #bank-method[data-bank="nvio"] { --bank-bg: #003755; --bank-hover: #002b42; --bank-ink: #fff; }
+    #bank-method[data-bank="lead"] { --bank-bg: #07021d; --bank-hover: #1b1534; --bank-ink: #fff; }
+    #bank-method .accordion-header { background: var(--bank-bg); color: var(--bank-ink); }
+    #bank-method .accordion-header:hover { background: var(--bank-hover); }
     #deuna-method .accordion-header { background: linear-gradient(135deg, #5c2d91, #3e1c66); color: #fff; }
     #deuna-method .accordion-header:hover { background: linear-gradient(135deg, #4b2378, #2f144f); }
     #paypal-method .accordion-header { background: #0070ba; color: #fff; }
     #paypal-method .accordion-header:hover { background: #005ea6; }
-    #bank-method .icon-pill { background: #0f265c; color: #ffdd00; }
-    #bank-method .icon-pill img { object-fit: cover; object-position: left; }
+    #bank-method .icon-pill { background: #fff; color: var(--bank-ink); }
+    #bank-method[data-bank="pichincha"] .icon-pill { background: #0f265c; color: #ffdd00; }
+    #bank-method[data-bank="guayaquil"] .icon-pill { color: #a80058; }
+    #bank-method[data-bank="nvio"] .icon-pill { color: #003755; }
+    #bank-method[data-bank="lead"] .icon-pill { color: #07021d; }
+    #bank-method .icon-pill img { object-fit: contain; }
+    #bank-method[data-bank="pichincha"] .icon-pill img { object-fit: cover; object-position: left; }
+    #bank-method .icon-pill svg { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
     #deuna-method .icon-pill, #paypal-method .icon-pill { background: #fff; }
-    #bank-method .header-titles span { color: #0f265c; }
+    #bank-method .header-titles span { color: var(--bank-ink); }
     #deuna-method .header-titles span, #paypal-method .header-titles span { color: #fff; }
     .accordion-header .chevron { color: inherit; }
     .header-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
@@ -220,11 +231,14 @@
         <p id="copy-status" class="status" role="status"></p>
         <div class="accordion-group">
 
-          <!-- 1. Banco Pichincha -->
+          <!-- 1. Transferencia bancaria -->
           <div class="accordion-item" id="bank-method" hidden>
             <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">
               <div class="header-left">
-                <span class="icon-pill" aria-hidden="true"><img src="https://www.pichincha.com/themes/custom/pichincha_theme/logo.svg" alt=""></span>
+                <span class="icon-pill" aria-hidden="true">
+                  <img id="bank-logo" alt="" hidden>
+                  <svg id="bank-icon" viewBox="0 0 24 24"><path d="M3 9h18L12 3 3 9zm2 0v9m5-9v9m4-9v9m5-9v9M3 18h18M2 21h20"></path></svg>
+                </span>
                 <div class="header-titles">
                   <strong id="bank-name">Transferencia bancaria</strong>
                   <span id="bank-type">Transferencia directa</span>
@@ -563,6 +577,31 @@
           country === 'MX' ? Boolean(settings.clabe) :
             Boolean(settings.accountNumber || settings.routingAch || settings.routingWire);
         if (hasBank) {
+          const bankName = (settings.bankName || '').trim().toLowerCase();
+          const bankLogo = document.getElementById('bank-logo');
+          const bankIcon = document.getElementById('bank-icon');
+          const bank = /\bpichincha\b/.test(bankName) ? 'pichincha' :
+            /\bguayaquil\b/.test(bankName) ? 'guayaquil' :
+              /\bnvio\b/.test(bankName) ? 'nvio' :
+                /\blead bank\b/.test(bankName) ? 'lead' : '';
+          const logos = {
+            pichincha: 'https://www.pichincha.com/themes/custom/pichincha_theme/logo.svg',
+            guayaquil: 'https://www.bancoguayaquil.com/favicon.svg',
+            nvio: 'https://nvio.mx/favicons/android-chrome-192x192.png',
+            lead: 'https://cdn.prod.website-files.com/6a429b8696dc4bb7b48e6a4b/6a44277eaf1d19ee4a1febab_Lead%20Favicon.png'
+          };
+          const logoUrl = logos[bank];
+          document.getElementById('bank-method').dataset.bank = bank;
+          if (logoUrl) {
+            bankLogo.addEventListener('error', () => {
+              console.warn('No se pudo cargar el logo del banco:', logoUrl);
+              bankLogo.hidden = true;
+              bankIcon.hidden = false;
+            }, { once: true });
+            bankLogo.src = logoUrl;
+            bankLogo.hidden = false;
+            bankIcon.hidden = true;
+          }
           document.getElementById('bank-name').textContent = settings.bankName || 'Transferencia bancaria';
           document.getElementById('bank-type').textContent = country === 'MX'
             ? 'CLABE interbancaria'
@@ -605,7 +644,9 @@
         }
         if (paypal) {
           document.getElementById('paypal-link').href = paypal;
-          document.getElementById('paypal-method').hidden = false;
+          const paypalMethod = document.getElementById('paypal-method');
+          paypalMethod.hidden = false;
+          if (country !== 'EC') paypalMethod.parentElement.prepend(paypalMethod);
         }
         status.textContent = hasBank || qr || deuna || paypal
           ? '' : 'Aún no hay métodos de donación configurados.';
