@@ -95,24 +95,42 @@
           <fieldset class="editor-section">
             <h2>Donaciones generales</h2>
             <p class="hint">Estos datos son públicos y aparecen solo en la página general de donaciones, no en las campañas. La cuenta se muestra si escribes su número. Deja vacíos los métodos que no quieras mostrar. Para el QR pega la URL HTTPS pública de la imagen.</p>
+            <h3>Ecuador</h3>
             <h3>Cuenta bancaria</h3>
             <div class="grid">
-              <label>Nombre del banco<input name="bankName"></label>
-              <label>Tipo de cuenta<input name="accountType"></label>
-              <label>Número de cuenta<input name="accountNumber"></label>
-              <label>Titular<input name="accountHolder"></label>
-              <label>Tipo de identificación<select name="accountIdType"><option value="cedula">Cédula</option><option value="ruc">RUC</option></select></label>
-              <label><span data-id-label>Número de cédula</span><input name="accountId"></label>
+              <label>Nombre del banco<input name="ec_bankName"></label>
+              <label>Tipo de cuenta<input name="ec_accountType"></label>
+              <label>Número de cuenta<input name="ec_accountNumber"></label>
+              <label>Titular<input name="ec_accountHolder"></label>
+              <label>Tipo de identificación<select name="ec_accountIdType"><option value="cedula">Cédula</option><option value="ruc">RUC</option></select></label>
+              <label><span data-id-label>Número de cédula</span><input name="ec_accountId"></label>
             </div>
             <h3>Deuna</h3>
             <div class="grid">
-              <label>URL de la imagen QR<input name="deunaQr" type="url" placeholder="https://..."></label>
-              <label>Enlace de pago<input name="deunaUrl" type="url" placeholder="https://..."></label>
+              <label>URL de la imagen QR<input name="ec_deunaQr" type="url" placeholder="https://..."></label>
+              <label>Enlace de pago<input name="ec_deunaUrl" type="url" placeholder="https://..."></label>
             </div>
             <h3>Otros enlaces</h3>
             <div class="grid">
-              <label>Enlace de PayPal<input name="paypalUrl" type="url" placeholder="https://..."></label>
-              <label>Enlace de TikTok<input name="tiktokUrl" type="url" placeholder="https://..."></label>
+              <label>Enlace de PayPal<input name="ec_paypalUrl" type="url" placeholder="https://..."></label>
+              <label>Enlace de TikTok<input name="ec_tiktokUrl" type="url" placeholder="https://..."></label>
+            </div>
+            <h3>México</h3>
+            <div class="grid">
+              <label>Nombre del banco<input name="mx_bankName"></label>
+              <label>CLABE interbancaria<input name="mx_clabe" inputmode="numeric" maxlength="18" pattern="[0-9]{18}"></label>
+              <label>Titular/Beneficiario<input name="mx_accountHolder"></label>
+              <label>Enlace de PayPal<input name="mx_paypalUrl" type="url" placeholder="https://..."></label>
+            </div>
+            <h3>Estados Unidos</h3>
+            <div class="grid">
+              <label>Nombre del banco<input name="us_bankName"></label>
+              <label>Tipo de cuenta<select name="us_accountType"><option value="Checking">Checking</option><option value="Corriente">Corriente</option></select></label>
+              <label>Número de cuenta<input name="us_accountNumber"></label>
+              <label>Número de ruta ACH<input name="us_routingAch" inputmode="numeric" maxlength="9" pattern="[0-9]{9}"></label>
+              <label>Número de ruta Wire<input name="us_routingWire" inputmode="numeric" maxlength="9" pattern="[0-9]{9}"></label>
+              <label>Titular/Beneficiario<input name="us_accountHolder"></label>
+              <label>Enlace de PayPal<input name="us_paypalUrl" type="url" placeholder="https://..."></label>
             </div>
           </fieldset>
           <section class="actions">
@@ -211,8 +229,12 @@
     const form = document.getElementById('editor');
     const donationForm = document.getElementById('donation-editor');
     const donationMessage = document.getElementById('donation-message');
-    const donationFields = ['bankName', 'accountType', 'accountNumber', 'accountHolder', 'accountId', 'accountIdType',
-      'deunaQr', 'deunaUrl', 'paypalUrl', 'tiktokUrl'];
+    const donationFields = {
+      EC: ['bankName', 'accountType', 'accountNumber', 'accountHolder', 'accountId', 'accountIdType',
+        'deunaQr', 'deunaUrl', 'paypalUrl', 'tiktokUrl'],
+      MX: ['bankName', 'clabe', 'accountHolder', 'paypalUrl'],
+      US: ['bankName', 'accountType', 'accountNumber', 'routingAch', 'routingWire', 'accountHolder', 'paypalUrl']
+    };
     const donationUrlFields = ['deunaQr', 'deunaUrl', 'paypalUrl', 'tiktokUrl'];
     const statusNode = document.getElementById('status');
     const messageNode = document.getElementById('message');
@@ -444,8 +466,14 @@
       button.disabled = true;
       lockDonationOperation(true);
       try {
-        const settings = await request('/api/donation-settings');
-        donationFields.forEach(key => { donationForm.elements[key].value = settings[key] || (key === 'accountIdType' ? 'cedula' : ''); });
+        const settings = await request('/api/admin/donation-settings');
+        Object.entries(donationFields).forEach(([country, fields]) => {
+          fields.forEach(key => {
+            const input = donationForm.elements[country.toLowerCase() + '_' + key];
+            input.value = (settings[country] && settings[country][key]) ||
+              (country === 'EC' && key === 'accountIdType' ? 'cedula' : '');
+          });
+        });
         updateIdLabel(donationForm);
         dirty = false;
         currentId = null;
@@ -465,23 +493,31 @@
 
     donationForm.addEventListener('input', event => {
       dirty = true;
-      if (event.target.name === 'accountIdType') updateIdLabel(donationForm);
+      if (event.target.name === 'ec_accountIdType') updateIdLabel(donationForm);
     });
     donationForm.addEventListener('submit', async event => {
       event.preventDefault();
       if (!connected) { donationMessage.textContent = 'Conecta la base de datos primero.'; return; }
       const settings = {};
-      donationFields.forEach(key => { settings[key] = donationForm.elements[key].value.trim(); });
-      for (const key of donationUrlFields) {
-        if (!settings[key]) continue;
-        try {
-          const url = new URL(settings[key]);
-          if (url.protocol !== 'https:' || url.username || url.password) throw new Error();
-        } catch {
-          donationMessage.textContent = 'Los enlaces deben ser URLs HTTPS válidas, sin credenciales.';
-          donationMessage.classList.add('error');
-          donationForm.elements[key].focus();
-          return;
+      Object.entries(donationFields).forEach(([country, fields]) => {
+        settings[country] = {};
+        fields.forEach(key => {
+          settings[country][key] = donationForm.elements[country.toLowerCase() + '_' + key].value.trim();
+        });
+      });
+      for (const [country, fields] of Object.entries(donationFields)) {
+        for (const key of fields.filter(field => donationUrlFields.includes(field))) {
+          const value = settings[country][key];
+          if (!value) continue;
+          try {
+            const url = new URL(value);
+            if (url.protocol !== 'https:' || url.username || url.password) throw new Error();
+          } catch {
+            donationMessage.textContent = 'Los enlaces deben ser URLs HTTPS válidas, sin credenciales.';
+            donationMessage.classList.add('error');
+            donationForm.elements[country.toLowerCase() + '_' + key].focus();
+            return;
+          }
         }
       }
       const fieldset = donationForm.querySelector('fieldset');
