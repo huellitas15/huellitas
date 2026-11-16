@@ -86,7 +86,7 @@
     #bank-method[data-bank="nvio"] .icon-pill { color: #003755; }
     #bank-method[data-bank="lead"] .icon-pill { color: #07021d; }
     #bank-method .icon-pill img { object-fit: contain; }
-    #bank-method[data-bank="pichincha"] .icon-pill img { object-fit: cover; object-position: left; }
+    #bank-method[data-bank="pichincha"] .icon-pill img { object-fit: cover; object-position: left center; }
     #bank-method .icon-pill svg { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
     #deuna-method .icon-pill, #paypal-method .icon-pill { background: #fff; }
     #bank-method .header-titles span { color: var(--bank-ink); }
@@ -593,14 +593,16 @@
           const logoUrl = logos[bank];
           document.getElementById('bank-method').dataset.bank = bank;
           if (logoUrl) {
+            bankLogo.addEventListener('load', () => {
+              bankLogo.hidden = false;
+              bankIcon.setAttribute('hidden', '');
+            }, { once: true });
             bankLogo.addEventListener('error', () => {
               console.warn('No se pudo cargar el logo del banco:', logoUrl);
               bankLogo.hidden = true;
-              bankIcon.hidden = false;
+              bankIcon.removeAttribute('hidden');
             }, { once: true });
             bankLogo.src = logoUrl;
-            bankLogo.hidden = false;
-            bankIcon.hidden = true;
           }
           document.getElementById('bank-name').textContent = settings.bankName || 'Transferencia bancaria';
           document.getElementById('bank-type').textContent = country === 'MX'
