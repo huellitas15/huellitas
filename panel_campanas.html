@@ -254,10 +254,12 @@
     let dirty = false;
     let connectedUrl = '';
     let originalShareCount = 0;
+    let legacyDonationSettings = false;
 
     function updateIdLabel(editor) {
       editor.querySelector('[data-id-label]').textContent =
-        editor.elements.accountIdType.value === 'ruc' ? 'Número de RUC' : 'Número de cédula';
+        editor.querySelector('[name="ec_accountIdType"], [name="accountIdType"]').value === 'ruc'
+          ? 'Número de RUC' : 'Número de cédula';
     }
 
     function lockDonationOperation(locked) {
@@ -282,7 +284,11 @@
       if (adminToken) headers.Authorization = 'Bearer ' + adminToken;
       const response = await fetch(base + path, { ...options, headers });
       const body = await response.json();
-      if (!response.ok) throw new Error(body.error || 'Error HTTP ' + response.status + '.');
+      if (!response.ok) {
+        const error = new Error(body.error || 'Error HTTP ' + response.status + '.');
+        error.status = response.status;
+        throw error;
+      }
       return body;
     }
 
@@ -466,7 +472,15 @@
       button.disabled = true;
       lockDonationOperation(true);
       try {
-        const settings = await request('/api/admin/donation-settings');
+        let settings;
+        legacyDonationSettings = false;
+        try {
+          settings = await request('/api/admin/donation-settings');
+        } catch (error) {
+          if (error.status !== 404) throw error;
+          settings = { EC: await request('/api/donation-settings?country=EC'), MX: {}, US: {} };
+          legacyDonationSettings = true;
+        }
         Object.entries(donationFields).forEach(([country, fields]) => {
           fields.forEach(key => {
             const input = donationForm.elements[country.toLowerCase() + '_' + key];
@@ -520,6 +534,12 @@
           }
         }
       }
+      if (legacyDonationSettings && ['MX', 'US'].some(country =>
+        Object.values(settings[country]).some(value => value))) {
+        donationMessage.textContent = 'El Worker debe actualizarse para guardar los datos de México y Estados Unidos.';
+        donationMessage.classList.add('error');
+        return;
+      }
       const fieldset = donationForm.querySelector('fieldset');
       const button = donationForm.querySelector('button[type="submit"]');
       fieldset.disabled = true;
@@ -528,7 +548,10 @@
       donationMessage.classList.remove('error');
       donationMessage.textContent = 'Guardando datos de donación…';
       try {
-        await request('/api/admin/donation-settings', { method: 'PUT', body: JSON.stringify(settings) });
+        await request('/api/admin/donation-settings', {
+          method: 'PUT',
+          body: JSON.stringify(legacyDonationSettings ? settings.EC : settings)
+        });
         dirty = false;
         donationMessage.textContent = 'Guardado. Los datos se muestran en la página general de donaciones.';
       } catch (error) {
