@@ -41,19 +41,37 @@ const DONATION_FIELDS = [
   'bankName', 'accountType', 'accountNumber', 'accountHolder', 'accountId', 'accountIdType',
   'deunaQr', 'deunaUrl', 'paypalUrl', 'tiktokUrl'
 ];
+const DONATION_COUNTRY_FIELDS = {
+  EC: DONATION_FIELDS,
+  MX: ['bankName', 'clabe', 'accountHolder', 'paypalUrl'],
+  US: ['bankName', 'accountType', 'accountNumber', 'routingAch', 'routingWire', 'accountHolder', 'paypalUrl']
+};
 const DONATION_URL_FIELDS = ['deunaQr', 'deunaUrl', 'paypalUrl', 'tiktokUrl'];
 
-function validateDonationSettings(settings) {
+function emptyCountrySettings(country) {
+  return Object.fromEntries(DONATION_COUNTRY_FIELDS[country].map(field => [
+    field, field === 'accountIdType' ? 'cedula' : ''
+  ]));
+}
+
+function isCountrySettings(settings) {
+  if (!settings || typeof settings !== 'object' || Array.isArray(settings)) return false;
+  return ['EC', 'MX', 'US'].some(country =>
+    Object.prototype.hasOwnProperty.call(settings, country));
+}
+
+function validateCountryDonationSettings(country, settings) {
   if (!settings || typeof settings !== 'object' || Array.isArray(settings)) {
     throw new Error('Los datos de donación no son válidos.');
   }
-  const clean = {};
-  for (const field of DONATION_FIELDS) {
+  const clean = emptyCountrySettings(country);
+  for (const field of DONATION_COUNTRY_FIELDS[country]) {
     if (field === 'accountIdType' && settings[field] === undefined) settings[field] = 'cedula';
-    if (typeof settings[field] !== 'string' || settings[field].length > 2048) {
+    const value = settings[field] === undefined ? '' : settings[field];
+    if (typeof value !== 'string' || value.length > 2048) {
       throw new Error('El campo ' + field + ' no es válido.');
     }
-    clean[field] = settings[field].trim();
+    clean[field] = value.trim();
     if (DONATION_URL_FIELDS.includes(field) && clean[field]) {
       let url;
       try { url = new URL(clean[field]); } catch { throw new Error('El enlace ' + field + ' no es válido.'); }
@@ -62,8 +80,49 @@ function validateDonationSettings(settings) {
       }
     }
   }
-  if (!['cedula', 'ruc'].includes(clean.accountIdType)) throw new Error('Selecciona cédula o RUC.');
+  if (country === 'EC' && !['cedula', 'ruc'].includes(clean.accountIdType)) {
+    throw new Error('Selecciona cédula o RUC.');
+  }
+  if (country === 'MX' && clean.clabe && !/^\d{18}$/.test(clean.clabe)) {
+    throw new Error('La CLABE interbancaria debe tener 18 dígitos.');
+  }
+  if (country === 'US' && ['routingAch', 'routingWire'].some(field =>
+    clean[field] && !/^\d{9}$/.test(clean[field]))) {
+    throw new Error('Los números de ruta ACH y Wire deben tener 9 dígitos.');
+  }
   return clean;
+}
+
+function validateDonationSettings(settings) {
+  if (!settings || typeof settings !== 'object' || Array.isArray(settings)) {
+    throw new Error('Los datos de donación no son válidos.');
+  }
+  if (!isCountrySettings(settings)) {
+    return {
+      EC: validateCountryDonationSettings('EC', settings),
+      MX: emptyCountrySettings('MX'),
+      US: emptyCountrySettings('US')
+    };
+  }
+  const clean = {};
+  for (const country of Object.keys(DONATION_COUNTRY_FIELDS)) {
+    clean[country] = validateCountryDonationSettings(country, settings[country] || {});
+  }
+  return clean;
+}
+
+function storedDonationSettings(payload) {
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+    throw new Error('Los datos de donación guardados no son válidos.');
+  }
+  return validateDonationSettings(payload);
+}
+
+function selectedDonationCountry(request, url) {
+  const requested = url.searchParams.get('country');
+  if (['EC', 'MX', 'US'].includes(requested)) return requested;
+  const detected = request.cf && request.cf.country;
+  return ['EC', 'MX', 'US'].includes(detected) ? detected : '';
 }
 
 async function handle(request, env) {
@@ -75,7 +134,13 @@ async function handle(request, env) {
 
   if (path === '/api/donation-settings' && request.method === 'GET') {
     const result = await env.DB.prepare('SELECT payload FROM donation_settings WHERE id = 1').first();
-    return response(result ? JSON.parse(result.payload) : {}, 200, headers);
+    const settings = result ? storedDonationSettings(JSON.parse(result.payload)) : {
+      EC: emptyCountrySettings('EC'), MX: emptyCountrySettings('MX'), US: emptyCountrySettings('US')
+    };
+    const country = selectedDonationCountry(request, url);
+    if (country) return response(settings[country], 200, headers);
+    const paypalUrl = settings.US.paypalUrl || settings.MX.paypalUrl || settings.EC.paypalUrl;
+    return response(paypalUrl ? { paypalUrl } : {}, 200, headers);
   }
 
   if (path === '/api/campaigns' && request.method === 'GET') {
@@ -107,10 +172,28 @@ async function handle(request, env) {
 
   if (!authorized(request, env)) return response({ error: 'No autorizado. Revisa la clave de administración.' }, 401, headers);
 
+  if (path === '/api/admin/donation-settings' && request.method === 'GET') {
+    const result = await env.DB.prepare('SELECT payload FROM donation_settings WHERE id = 1').first();
+    return response(result
+      ? storedDonationSettings(JSON.parse(result.payload))
+      : { EC: emptyCountrySettings('EC'), MX: emptyCountrySettings('MX'), US: emptyCountrySettings('US') },
+    200, headers);
+  }
+
   if (path === '/api/admin/donation-settings' && request.method === 'PUT') {
     let settings;
     try {
-      settings = validateDonationSettings(await request.json());
+      const input = await request.json();
+      const legacySettings = !isCountrySettings(input);
+      settings = validateDonationSettings(input);
+      if (legacySettings) {
+        const existing = await env.DB.prepare('SELECT payload FROM donation_settings WHERE id = 1').first();
+        if (existing) {
+          const previous = storedDonationSettings(JSON.parse(existing.payload));
+          settings.MX = previous.MX;
+          settings.US = previous.US;
+        }
+      }
     } catch (error) {
       return response({ error: error.message }, 400, headers);
     }
