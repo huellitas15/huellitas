@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Administrar campañas | Huellas Felices</title>
+  <style>
+    :root { font-family: Inter, system-ui, sans-serif; color: #23332b; background: #f7f8f6; }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    body { margin: 0; }
+    header { background: white; border-bottom: 1px solid #e6ece8; padding: 20px max(20px, calc((100% - 1180px) / 2)); }
+    header h1 { margin: 0; font-size: 23px; }
+    header p { margin: 5px 0 0; color: #637168; font-size: 14px; }
+    main { max-width: 1180px; margin: auto; padding: 24px 20px 60px; }
+    .notice, .connection, aside, .editor-section { background: white; border: 1px solid #e3eae5; border-radius: 12px; }
+    .notice { margin-bottom: 18px; padding: 15px 18px; background: #eff8f2; color: #355443; line-height: 1.55; }
+    .connection { margin-bottom: 18px; padding: 18px; }
+    .connection h2, .editor-section h2, aside h2 { margin: 0 0 14px; font-size: 18px; }
+    .connection-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, .7fr) auto; gap: 10px; align-items: end; }
+    .workspace { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 18px; align-items: start; }
+    aside { padding: 18px; }
+    .campaign-list { display: grid; gap: 8px; margin-top: 14px; }
+    button, input, textarea, select { font: inherit; }
+    button { border: 0; border-radius: 8px; padding: 10px 14px; background: #02a95c; color: white; font-weight: 700; cursor: pointer; }
+    button:hover { background: #008748; }
+    button.secondary { background: #edf5ef; color: #135c39; }
+    button.secondary:hover { background: #dcefe2; }
+    button.danger { background: #a52e32; }
+    button:disabled { opacity: .55; cursor: wait; }
+    .campaign-item { width: 100%; text-align: left; background: #f4f8f5; color: #304337; }
+    .campaign-item.active { outline: 2px solid #02a95c; }
+    .campaign-item small { display: block; margin-top: 4px; font-weight: 500; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    #status, #message, #donation-message { min-height: 22px; color: #52665a; font-size: 14px; white-space: pre-wrap; }
+    .error { color: #a52e32 !important; }
+    #empty { padding: 56px 24px; text-align: center; color: #637168; border: 1px dashed #cbdcd1; border-radius: 12px; background: white; }
+    form { display: grid; gap: 14px; }
+    .editor-section { padding: 18px; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    label { display: grid; gap: 5px; font-size: 14px; font-weight: 650; }
+    input, textarea, select { width: 100%; border: 1px solid #cddbd1; border-radius: 8px; padding: 10px; color: #23332b; background: white; }
+    textarea { min-height: 100px; resize: vertical; }
+    input:focus, textarea:focus, select:focus { outline: 2px solid #75cba0; }
+    .wide { grid-column: 1 / -1; }
+    .hint { margin: 0 0 12px; color: #637168; font-size: 13px; line-height: 1.5; }
+    .status-options { display: flex; flex-wrap: wrap; gap: 10px; }
+    .status-options label { display: flex; align-items: center; gap: 7px; padding: 11px 14px; border: 1px solid #dfe8e1; border-radius: 8px; cursor: pointer; }
+    .status-options input { width: auto; accent-color: #02a95c; }
+    .entry { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: start; padding: 12px; margin-bottom: 10px; border: 1px solid #dfe9e3; border-radius: 8px; background: #f7faf8; }
+    .entry-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .entry-fields .wide { grid-column: 1 / -1; }
+    .remove-entry { padding: 8px 10px; }
+    .actions { position: sticky; bottom: 10px; display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; border: 1px solid #e3eae5; border-radius: 10px; background: white; box-shadow: 0 6px 20px #0002; }
+    #message, #donation-message { flex-basis: 100%; }
+    fieldset.editor-section { min-width: 0; margin: 0; }
+    @media (max-width: 760px) {
+      .workspace, .connection-grid, .grid, .entry-fields { grid-template-columns: 1fr; }
+      .wide, .entry-fields .wide { grid-column: auto; }
+      aside { position: static; }
+      .actions { position: static; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Huellas Felices · Administración de campañas</h1>
+    <p>Lo que guardas aquí se muestra en la página pública. No hay que crear ni publicar archivos por campaña.</p>
+  </header>
+  <main>
+    <div class="notice">
+      Administra los casos desde aquí: crea una campaña, completa su historia, edita los montos cuando cambien y marca el caso como completado cuando corresponda.
+      La portada y la página de cada caso leen la misma base de datos.
+    </div>
+    <section class="connection" aria-labelledby="connection-title">
+      <h2 id="connection-title">Conexión</h2>
+      <div class="connection-grid">
+        <label>URL de Cloudflare Worker<input id="api-url" type="url" autocomplete="url" placeholder="https://huellas-datos.TU-CUENTA.workers.dev"></label>
+        <label>Clave de administración<input id="admin-token" type="password" autocomplete="current-password"></label>
+        <button id="connect" type="button">Conectar</button>
+      </div>
+      <p class="hint" style="margin:10px 0 0">La clave no se guarda en la página. La URL se puede cambiar en api-config.js.</p>
+      <div id="status" role="status" aria-live="polite"></div>
+    </section>
+    <div class="workspace">
+      <aside>
+        <h2>Campañas</h2>
+        <button id="new" type="button">+ Crear campaña</button>
+        <div class="toolbar"><button id="edit-donation" class="secondary" type="button">Editar página de donaciones</button></div>
+        <div id="campaign-list" class="campaign-list"></div>
+      </aside>
+      <div>
+        <div id="empty"><strong>Conecta la base de datos para administrar los casos.</strong><br>Después podrás crear y editar campañas aquí.</div>
+        <form id="donation-editor" hidden>
+          <fieldset class="editor-section">
+            <h2>Donaciones generales</h2>
+            <p class="hint">Estos datos son públicos y aparecen solo en la página general de donaciones, no en las campañas. La cuenta se muestra si escribes su número. Deja vacíos los métodos que no quieras mostrar. Para el QR pega la URL HTTPS pública de la imagen.</p>
+            <h3>Ecuador</h3>
+            <h3>Cuenta bancaria</h3>
+            <div class="grid">
+              <label>Nombre del banco<input name="ec_bankName"></label>
+              <label>Tipo de cuenta<input name="ec_accountType"></label>
+              <label>Número de cuenta<input name="ec_accountNumber"></label>
+              <label>Titular<input name="ec_accountHolder"></label>
+              <label>Tipo de identificación<select name="ec_accountIdType"><option value="cedula">Cédula</option><option value="ruc">RUC</option></select></label>
+              <label><span data-id-label>Número de cédula</span><input name="ec_accountId"></label>
+            </div>
+            <h3>Deuna</h3>
+            <div class="grid">
+              <label>URL de la imagen QR<input name="ec_deunaQr" type="url" placeholder="https://..."></label>
+              <label>Enlace de pago<input name="ec_deunaUrl" type="url" placeholder="https://..."></label>
+            </div>
+            <h3>Otros enlaces</h3>
+            <div class="grid">
+              <label>Enlace de PayPal<input name="ec_paypalUrl" type="url" placeholder="https://..."></label>
+              <label>Enlace de TikTok<input name="ec_tiktokUrl" type="url" placeholder="https://..."></label>
+            </div>
+            <h3>México</h3>
+            <div class="grid">
+              <label>Nombre del banco<input name="mx_bankName"></label>
+              <label>CLABE interbancaria<input name="mx_clabe" inputmode="numeric" maxlength="18" pattern="[0-9]{18}"></label>
+              <label>Titular/Beneficiario<input name="mx_accountHolder"></label>
+              <label>Enlace de PayPal<input name="mx_paypalUrl" type="url" placeholder="https://..."></label>
+            </div>
+            <h3>Estados Unidos</h3>
+            <div class="grid">
+              <label>Nombre del banco<input name="us_bankName"></label>
+              <label>Tipo de cuenta<select name="us_accountType"><option value="Checking">Checking</option><option value="Corriente">Corriente</option></select></label>
+              <label>Número de cuenta<input name="us_accountNumber"></label>
+              <label>Número de ruta ACH<input name="us_routingAch"></label>
+              <label>Número de ruta Wire<input name="us_routingWire"></label>
+              <label>Titular/Beneficiario<input name="us_accountHolder"></label>
+              <label>Enlace de PayPal<input name="us_paypalUrl" type="url" placeholder="https://..."></label>
+            </div>
+          </fieldset>
+          <section class="actions">
+            <div id="donation-message" role="status" aria-live="polite"></div>
+            <button type="submit">Guardar datos de donación</button>
+          </section>
+        </form>
+        <form id="editor" hidden>
+          <section class="editor-section">
+            <h2>Estado</h2>
+            <div class="status-options">
+              <label><input type="radio" name="status" value="vigente" checked> Campaña vigente</label>
+              <label><input type="radio" name="status" value="completada"> Caso completado</label>
+            </div>
+          </section>
+          <section class="editor-section">
+            <h2>Historia</h2>
+            <div class="grid">
+              <label>Título<input name="title" required maxlength="200"></label>
+              <label>Nombre del enlace<input name="slug" required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="ayuda-para-kira"><span class="hint">Minúsculas, números y guiones; por ejemplo, ayuda-para-kira.</span></label>
+              <label>Categoría y ubicación<input name="category" placeholder="Rescate animal · Guayas"></label>
+              <label>Nombre de la organización<input name="brand" value="Huellas Felices"></label>
+              <label>Organizador<input name="organizer"></label>
+              <label>Descripción del organizador<input name="organizerDescription"></label>
+              <label>Título de la historia<input name="storyTitle" value="La historia"></label>
+              <label>Texto de la foto<input name="photoCaption"></label>
+              <label class="wide">Historia<textarea name="story"></textarea></label>
+              <label class="wide">Texto destacado<textarea name="highlight"></textarea></label>
+              <label class="wide">Final de la historia<textarea name="storyEnding"></textarea></label>
+            </div>
+          </section>
+          <section class="editor-section">
+            <h2>Fotos</h2>
+            <div class="grid">
+              <label>Foto principal (URL)<input name="photo1" type="url"></label>
+              <label>Foto 2 (URL)<input name="photo2" type="url"></label>
+              <label>Foto 3 (URL)<input name="photo3" type="url"></label>
+            </div>
+            <div id="additionalPhotos"></div>
+            <button type="button" class="secondary" data-add="additionalPhotos">+ Añadir foto</button>
+          </section>
+          <section class="editor-section">
+            <h2>Montos y donaciones</h2>
+            <p class="hint">Los montos y donaciones se actualizan manualmente. El contador de compartidos aumenta con cada pulsación y también se puede ajustar aquí.</p>
+            <div class="grid">
+              <label>Total recaudado (USD)<input name="raised" type="number" min="0" step="0.01" value="0"></label>
+              <label>Meta (USD)<input name="goal" type="number" min="0" step="0.01"></label>
+              <label>Número de donaciones<input name="donationCount" type="number" min="0" step="1" value="0"></label>
+              <label>Veces compartido<input name="shareCount" type="number" min="0" step="1" value="0"></label>
+            </div>
+          </section>
+          <section id="payment-section" class="editor-section">
+            <h2>Métodos de pago de esta campaña</h2>
+            <p class="hint">Puedes usar solo cuenta bancaria, solo PayPal o ambos. La cuenta bancaria se muestra cuando escribes su número; PayPal se muestra cuando escribes su usuario.</p>
+            <h3>Cuenta bancaria</h3>
+            <div class="grid">
+              <label>Nombre del banco<input name="bankName" placeholder="Ej. Banco Guayaquil"></label>
+              <label>Tipo de cuenta<input name="accountType" value="Ahorros"></label>
+              <label>Número de cuenta<input name="accountNumber"></label>
+              <label>Titular<input name="accountHolder"></label>
+              <label>Tipo de identificación<select name="accountIdType"><option value="cedula">Cédula</option><option value="ruc">RUC</option></select></label>
+              <label><span data-id-label>Número de cédula</span><input name="accountId"></label>
+            </div>
+            <h3>PayPal</h3>
+            <div class="grid">
+              <label>Usuario de PayPal.me<input name="paypal"></label>
+            </div>
+            <h3>Contacto</h3>
+            <div class="grid">
+              <label>Correo para comprobantes<input name="email" type="email"></label>
+              <label>Enlace a TikTok<input name="tiktok" type="url"></label>
+            </div>
+          </section>
+          <section class="editor-section">
+            <h2>Actualizaciones</h2>
+            <div id="updates"></div>
+            <button type="button" class="secondary" data-add="updates">+ Añadir actualización</button>
+          </section>
+          <section id="donors-section" class="editor-section">
+            <h2>Donadores recientes</h2>
+            <div id="donors"></div>
+            <button type="button" class="secondary" data-add="donors">+ Añadir donador</button>
+          </section>
+          <section class="actions">
+            <div id="message" role="status" aria-live="polite"></div>
+            <button type="submit">Guardar cambios</button>
+            <button id="delete" class="danger" type="button">Eliminar campaña</button>
+          </section>
+        </form>
+      </div>
+    </div>
+  </main>
+  <script src="./api-config.js"></script>
+  <script>
+    'use strict';
+    const form = document.getElementById('editor');
+    const donationForm = document.getElementById('donation-editor');
+    const donationMessage = document.getElementById('donation-message');
+    const donationFields = {
+      EC: ['bankName', 'accountType', 'accountNumber', 'accountHolder', 'accountId', 'accountIdType',
+        'deunaQr', 'deunaUrl', 'paypalUrl', 'tiktokUrl'],
+      MX: ['bankName', 'clabe', 'accountHolder', 'paypalUrl'],
+      US: ['bankName', 'accountType', 'accountNumber', 'routingAch', 'routingWire', 'accountHolder', 'paypalUrl']
+    };
+    const donationUrlFields = ['deunaQr', 'deunaUrl', 'paypalUrl', 'tiktokUrl'];
+    const statusNode = document.getElementById('status');
+    const messageNode = document.getElementById('message');
+    const fields = ['title', 'slug', 'category', 'brand', 'organizer', 'organizerDescription',
+      'storyTitle', 'photoCaption', 'story', 'highlight', 'storyEnding', 'photo1', 'photo2',
+      'photo3', 'raised', 'goal', 'donationCount', 'shareCount', 'email', 'tiktok',
+      'bankName', 'accountType', 'accountNumber', 'accountHolder', 'accountId', 'accountIdType', 'paypal'];
+    const listSchemas = {
+      additionalPhotos: [['url', 'URL de la foto', 'url']],
+      updates: [['title', 'Título', 'text'], ['date', 'Fecha', 'date'], ['description', 'Contenido', 'textarea']],
+      donors: [['name', 'Nombre público o Anónimo', 'text'], ['amount', 'Monto (USD)', 'number'], ['date', 'Fecha', 'datetime-local']]
+    };
+    let campaigns = [];
+    let currentId = null;
+    let adminToken = '';
+    let connected = false;
+    let dirty = false;
+    let connectedUrl = '';
+    let originalShareCount = 0;
+    let legacyDonationSettings = false;
+
+    function updateIdLabel(editor) {
+      editor.querySelector('[data-id-label]').textContent =
+        editor.querySelector('[name="ec_accountIdType"], [name="accountIdType"]').value === 'ruc'
+          ? 'Número de RUC' : 'Número de cédula';
+    }
+
+    function lockDonationOperation(locked) {
+      document.querySelector('.workspace').inert = locked;
+      document.querySelector('.connection').inert = locked;
+    }
+
+    function apiBaseUrl() {
+      try {
+        const url = new URL(document.getElementById('api-url').value.trim());
+        return url.protocol === 'https:' && !url.username && !url.password && !url.search && !url.hash
+          ? url.href.replace(/\/+$/, '') : '';
+      } catch {
+        return '';
+      }
+    }
+
+    async function request(path, options = {}) {
+      const base = apiBaseUrl();
+      if (!base) throw new Error('Configura una URL HTTPS válida del Cloudflare Worker.');
+      const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+      if (adminToken) headers.Authorization = 'Bearer ' + adminToken;
+      const response = await fetch(base + path, { ...options, headers });
+      const body = await response.json();
+      if (!response.ok) {
+        const error = new Error(body.error || 'Error HTTP ' + response.status + '.');
+        error.status = response.status;
+        throw error;
+      }
+      return body;
+    }
+
+    function showMessage(message, isError = false) {
+      messageNode.textContent = message;
+      messageNode.classList.toggle('error', isError);
+    }
+
+    function newCampaign() {
+      const campaign = {
+        id: crypto.randomUUID(),
+        slug: '',
+        title: '',
+        status: 'vigente',
+        showHome: 'si',
+        updates: [],
+        donors: [],
+        additionalPhotos: []
+      };
+      fields.forEach(key => { if (!(key in campaign)) campaign[key] = ''; });
+      campaign.brand = campaign.brand || 'Huellas Felices';
+      campaign.storyTitle = campaign.storyTitle || 'La historia';
+      campaign.accountType = campaign.accountType || 'Ahorros';
+      campaign.accountIdType = 'cedula';
+      campaign.raised = campaign.raised || '0';
+      campaign.donationCount = campaign.donationCount || '0';
+      campaign.shareCount = campaign.shareCount || '0';
+      return campaign;
+    }
+
+    function entryInput(schema, value) {
+      const [key, labelText, type] = schema;
+      const label = document.createElement('label');
+      label.textContent = labelText;
+      const input = document.createElement(type === 'textarea' ? 'textarea' : 'input');
+      if (type !== 'textarea') input.type = type;
+      input.dataset.key = key;
+      input.value = value || '';
+      if (key === 'amount') { input.min = '0.01'; input.step = '0.01'; }
+      label.append(input);
+      return label;
+    }
+
+    function renderEntries(kind, values = []) {
+      const container = document.getElementById(kind);
+      container.replaceChildren(...values.map((item, index) => {
+        const entry = document.createElement('div');
+        entry.className = 'entry';
+        const inputs = document.createElement('div');
+        inputs.className = 'entry-fields';
+        listSchemas[kind].forEach(schema => {
+          const label = entryInput(schema, item[schema[0]]);
+          if (schema[2] === 'textarea') label.className = 'wide';
+          inputs.append(label);
+        });
+        const remove = document.createElement('button');
+        remove.className = 'danger remove-entry';
+        remove.type = 'button';
+        remove.textContent = 'Quitar';
+        remove.addEventListener('click', () => {
+          const current = collect();
+          current[kind].splice(index, 1);
+          renderEditor(current);
+          dirty = true;
+        });
+        entry.append(inputs, remove);
+        return entry;
+      }));
+    }
+
+    function collect() {
+      const campaign = { id: currentId, status: form.elements.status.value, showHome: 'si' };
+      fields.forEach(key => { campaign[key] = form.elements[key].value.trim(); });
+      Object.keys(listSchemas).forEach(kind => {
+        campaign[kind] = Array.from(document.querySelectorAll('#' + kind + ' .entry'), entry => {
+          const item = {};
+          entry.querySelectorAll('[data-key]').forEach(input => { item[input.dataset.key] = input.value.trim(); });
+          return item;
+        });
+      });
+      return campaign;
+    }
+
+    function renderEditor(campaign) {
+      currentId = campaign.id;
+      form.hidden = false;
+      donationForm.hidden = true;
+      document.getElementById('empty').hidden = true;
+      fields.forEach(key => { form.elements[key].value = campaign[key] || (key === 'accountIdType' ? 'cedula' : ''); });
+      updateIdLabel(form);
+      form.elements.status.value = campaign.status || 'vigente';
+      Object.keys(listSchemas).forEach(kind => renderEntries(kind, campaign[kind] || []));
+      updateStatusFields();
+      renderList();
+    }
+
+    function updateStatusFields() {
+      const completed = form.elements.status.value === 'completada';
+      document.getElementById('payment-section').hidden = completed;
+      document.getElementById('donors-section').hidden = completed;
+    }
+
+    function renderList() {
+      const list = document.getElementById('campaign-list');
+      list.replaceChildren(...campaigns.map(campaign => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'campaign-item' + (campaign.id === currentId ? ' active' : '');
+        button.textContent = campaign.title || 'Caso sin título';
+        const status = document.createElement('small');
+        status.textContent = campaign.status === 'completada' ? 'Caso completado' : 'Campaña vigente';
+        button.append(status);
+        button.addEventListener('click', () => {
+          if (dirty && !confirm('Hay cambios sin guardar. ¿Descartarlos?')) return;
+          dirty = false;
+          originalShareCount = Number(campaign.shareCount || 0);
+          renderEditor(campaign);
+          showMessage('');
+        });
+        return button;
+      }));
+    }
+
+    async function connect() {
+      const button = document.getElementById('connect');
+      const token = document.getElementById('admin-token').value;
+      if (dirty && !confirm('Hay cambios sin guardar. ¿Descartarlos?')) return;
+      if (!apiBaseUrl() || !token) {
+        statusNode.textContent = 'Completa la URL HTTPS y la clave de administración.';
+        return;
+      }
+      button.disabled = true;
+      statusNode.textContent = 'Conectando y cargando casos…';
+      adminToken = token;
+      try {
+        const result = await request('/api/admin/campaigns');
+        if (!Array.isArray(result.campaigns)) throw new Error('La base de datos devolvió un listado no válido.');
+        campaigns = result.campaigns;
+        connected = true;
+        connectedUrl = document.getElementById('api-url').value;
+        dirty = false;
+        currentId = null;
+        form.hidden = true;
+        donationForm.hidden = true;
+        document.getElementById('empty').hidden = false;
+        renderList();
+        statusNode.textContent = 'Conectado. ' + campaigns.length + ' campañas cargadas.';
+      } catch (error) {
+        connected = false;
+        adminToken = '';
+        statusNode.textContent = 'No se pudo conectar: ' + error.message;
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    document.getElementById('connect').addEventListener('click', connect);
+    document.getElementById('api-url').value = window.HUELLAS_API_URL || '';
+    document.getElementById('api-url').addEventListener('change', () => {
+      if (dirty && !confirm('Hay cambios sin guardar. ¿Descartarlos?')) {
+        document.getElementById('api-url').value = connectedUrl;
+        return;
+      }
+      connected = false;
+      adminToken = '';
+      campaigns = [];
+      form.hidden = true;
+      donationForm.hidden = true;
+      document.getElementById('empty').hidden = false;
+      currentId = null;
+      dirty = false;
+      renderList();
+      statusNode.textContent = 'Vuelve a conectar con la nueva URL.';
+    });
+
+    document.getElementById('edit-donation').addEventListener('click', async event => {
+      if (!connected) { statusNode.textContent = 'Conecta la base de datos primero.'; return; }
+      if (!donationForm.hidden) return;
+      if (dirty && !confirm('Hay cambios sin guardar. ¿Descartarlos?')) return;
+      const button = event.currentTarget;
+      button.disabled = true;
+      lockDonationOperation(true);
+      try {
+        let settings;
+        legacyDonationSettings = false;
+        try {
+          settings = await request('/api/admin/donation-settings');
+        } catch (error) {
+          if (error.status !== 404) throw error;
+          settings = { EC: await request('/api/donation-settings?country=EC'), MX: {}, US: {} };
+          legacyDonationSettings = true;
+        }
+        Object.entries(donationFields).forEach(([country, fields]) => {
+          fields.forEach(key => {
+            const input = donationForm.elements[country.toLowerCase() + '_' + key];
+            input.value = (settings[country] && settings[country][key]) ||
+              (country === 'EC' && key === 'accountIdType' ? 'cedula' : '');
+          });
+        });
+        updateIdLabel(donationForm);
+        dirty = false;
+        currentId = null;
+        form.hidden = true;
+        document.getElementById('empty').hidden = true;
+        donationForm.hidden = false;
+        donationMessage.textContent = '';
+        donationMessage.classList.remove('error');
+        renderList();
+      } catch (error) {
+        statusNode.textContent = 'No se pudieron cargar los datos de donación: ' + error.message;
+      } finally {
+        lockDonationOperation(false);
+        button.disabled = false;
+      }
+    });
+
+    donationForm.addEventListener('input', event => {
+      dirty = true;
+      if (event.target.name === 'ec_accountIdType') updateIdLabel(donationForm);
+    });
+    donationForm.addEventListener('submit', async event => {
+      event.preventDefault();
+      if (!connected) { donationMessage.textContent = 'Conecta la base de datos primero.'; return; }
+      const settings = {};
+      Object.entries(donationFields).forEach(([country, fields]) => {
+        settings[country] = {};
+        fields.forEach(key => {
+          settings[country][key] = donationForm.elements[country.toLowerCase() + '_' + key].value.trim();
+        });
+      });
+      for (const [country, fields] of Object.entries(donationFields)) {
+        for (const key of fields.filter(field => donationUrlFields.includes(field))) {
+          const value = settings[country][key];
+          if (!value) continue;
+          try {
+            const url = new URL(value);
+            if (url.protocol !== 'https:' || url.username || url.password) throw new Error();
+          } catch {
+            donationMessage.textContent = 'Los enlaces deben ser URLs HTTPS válidas, sin credenciales.';
+            donationMessage.classList.add('error');
+            donationForm.elements[country.toLowerCase() + '_' + key].focus();
+            return;
+          }
+        }
+      }
+      if (legacyDonationSettings && ['MX', 'US'].some(country =>
+        Object.values(settings[country]).some(value => value))) {
+        donationMessage.textContent = 'El Worker debe actualizarse para guardar los datos de México y Estados Unidos.';
+        donationMessage.classList.add('error');
+        return;
+      }
+      const fieldset = donationForm.querySelector('fieldset');
+      const button = donationForm.querySelector('button[type="submit"]');
+      fieldset.disabled = true;
+      button.disabled = true;
+      lockDonationOperation(true);
+      donationMessage.classList.remove('error');
+      donationMessage.textContent = 'Guardando datos de donación…';
+      try {
+        await request('/api/admin/donation-settings', {
+          method: 'PUT',
+          body: JSON.stringify(legacyDonationSettings ? settings.EC : settings)
+        });
+        dirty = false;
+        donationMessage.textContent = 'Guardado. Los datos se muestran en la página general de donaciones.';
+      } catch (error) {
+        donationMessage.textContent = 'No se pudieron guardar los datos: ' + error.message;
+        donationMessage.classList.add('error');
+      } finally {
+        lockDonationOperation(false);
+        fieldset.disabled = false;
+        button.disabled = false;
+      }
+    });
+
+    document.getElementById('new').addEventListener('click', () => {
+      if (!connected) { showMessage('Conecta la base de datos primero.', true); return; }
+      if (dirty && !confirm('Hay cambios sin guardar. ¿Descartarlos?')) return;
+      dirty = true;
+      originalShareCount = 0;
+      renderEditor(newCampaign());
+      showMessage('Completa los datos del caso y guarda para que aparezca en la página.');
+    });
+
+    form.addEventListener('input', event => {
+      dirty = true;
+      if (event.target.name === 'status') updateStatusFields();
+      if (event.target.name === 'accountIdType') updateIdLabel(form);
+    });
+    document.querySelectorAll('[data-add]').forEach(button => button.addEventListener('click', () => {
+      const campaign = collect();
+      const kind = button.dataset.add;
+      const entry = {};
+      listSchemas[kind].forEach(([key]) => { entry[key] = ''; });
+      campaign[kind].push(entry);
+      dirty = true;
+      renderEditor(campaign);
+    }));
+
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      if (!connected) { showMessage('Conecta la base de datos primero.', true); return; }
+      const campaign = collect();
+      if (!campaign.title) { showMessage('Escribe el título del caso.', true); form.elements.title.focus(); return; }
+      if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(campaign.slug) || campaign.slug === 'index') {
+        showMessage('El enlace debe usar minúsculas, números y guiones.', true);
+        form.elements.slug.focus();
+        return;
+      }
+      if (campaigns.some(item => item.slug === campaign.slug && item.id !== campaign.id)) {
+        showMessage('Ya existe un caso con ese enlace.', true);
+        form.elements.slug.focus();
+        return;
+      }
+      const submit = form.querySelector('button[type="submit"]');
+      submit.disabled = true;
+      showMessage('Guardando en la base de datos…');
+      try {
+        const existing = campaigns.some(item => item.id === campaign.id);
+        if (existing) campaign.shareCountDelta = Number(campaign.shareCount || 0) - originalShareCount;
+        const result = await request(existing ? '/api/admin/campaigns/' + encodeURIComponent(campaign.id) : '/api/admin/campaigns', {
+          method: existing ? 'PUT' : 'POST',
+          body: JSON.stringify(campaign)
+        });
+        const saved = result.campaign;
+        campaigns = campaigns.filter(item => item.id !== saved.id).concat(saved);
+        dirty = false;
+        originalShareCount = Number(saved.shareCount || 0);
+        renderEditor(saved);
+        showMessage('Guardado. El caso ya aparece en la portada y en su página pública.');
+      } catch (error) {
+        showMessage('No se pudo guardar: ' + error.message, true);
+      } finally {
+        submit.disabled = false;
+      }
+    });
+
+    document.getElementById('delete').addEventListener('click', async () => {
+      if (!connected || !currentId) return;
+      if (!confirm('¿Eliminar este caso de la base de datos? No se podrá recuperar.')) return;
+      const button = document.getElementById('delete');
+      button.disabled = true;
+      try {
+        await request('/api/admin/campaigns/' + encodeURIComponent(currentId), { method: 'DELETE' });
+        campaigns = campaigns.filter(campaign => campaign.id !== currentId);
+        currentId = null;
+        dirty = false;
+        form.hidden = true;
+        document.getElementById('empty').hidden = false;
+        renderList();
+        showMessage('Caso eliminado.');
+      } catch (error) {
+        showMessage('No se pudo eliminar: ' + error.message, true);
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    window.addEventListener('beforeunload', event => {
+      if (dirty) { event.preventDefault(); event.returnValue = ''; }
+    });
+    if (window.HUELLAS_API_URL && !window.HUELLAS_API_URL.includes('TU-WORKER')) {
+      statusNode.textContent = 'Escribe tu clave y pulsa Conectar.';
+    } else {
+      statusNode.textContent = 'Falta configurar la URL del Worker en api-config.js.';
+    }
+  </script>
+</body>
+</html>

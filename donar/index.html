@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="format-detection" content="telephone=no">
+  <meta name="description" content="Conoce las formas de apoyar a Huellas Felices.">
+  <title>Donar | Huellas Felices</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #02a95c;
+      --green-dark: #008748;
+      --green-soft: #e8f7f0;
+      --ink: #1a1a1a;
+      --muted: #5e5e5e;
+      --border: #e8e6e1;
+      --background: #fbfaf8;
+      --text-soft: #5e5e5e;
+    }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--background); color: var(--ink); font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    body::before { content: ""; position: fixed; inset: 0; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 90 90'%3E%3Cg fill='%23008748' fill-opacity='.18' transform='translate(18 18) rotate(-18 12 12)'%3E%3Cellipse cx='8.5' cy='5' rx='2.5' ry='3'/%3E%3Cellipse cx='15.5' cy='5' rx='2.5' ry='3'/%3E%3Cellipse cx='4.5' cy='11' rx='2.2' ry='2.8'/%3E%3Cellipse cx='19.5' cy='11' rx='2.2' ry='2.8'/%3E%3Cpath d='M12 11c-3.6 0-6.5 2.6-6.5 6.2 0 2.2 2.2 4.1 6.5 4.1s6.5-1.9 6.5-4.1C18.5 13.6 15.6 11 12 11z'/%3E%3C/g%3E%3C/svg%3E"); background-size: 90px 90px; animation: float-paws 8s ease-in-out infinite alternate; }
+    @keyframes float-paws { to { background-position: 0 -16px; } }
+    @media (prefers-reduced-motion: reduce) { body::before { animation: none; } }
+    main, footer.site-footer { position: relative; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    a:focus-visible, button:focus-visible { outline: 3px solid #006f3c; outline-offset: 3px; }
+    .container { width: min(1140px, calc(100% - 40px)); margin: 0 auto; }
+    .navbar { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.97); border-bottom: 1px solid var(--border); }
+    .nav-inner { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .brand { display: inline-flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 800; letter-spacing: -.02em; white-space: nowrap; }
+    .brand-icon { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 8px; background: var(--green-soft); color: var(--green); }
+    .brand-icon img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .nav-links { display: flex; align-items: center; gap: 24px; font-size: 14px; font-weight: 600; }
+    .nav-link { color: #414141; }
+    .nav-link:hover, .footer-links a:hover { color: var(--green-dark); }
+    .button { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 8px 18px; border-radius: 999px; background: var(--green); color: #fff; font-size: 14px; font-weight: 700; }
+    .button:hover { background: var(--green-dark); }
+    .donation-page { padding: 40px 0 80px; }
+    .donation-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; max-width: 720px; align-items: start; }
+    .cover-intro { position: relative; display: flex; flex-direction: column; justify-content: flex-start; min-height: 410px; overflow: hidden; padding: 32px; border-radius: 14px; background: #1a2e24; color: #fff; }
+    .cover-intro::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.42), rgba(0,0,0,.8)); }
+    .cover-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .8s ease; }
+    .cover-image.is-active { opacity: 1; }
+    .cover-intro h1, .intro-copy { position: relative; z-index: 1; }
+    .cover-intro h1 { padding-right: 44px; }
+    .cover-toggle { position: absolute; z-index: 2; top: 10px; right: 10px; display: grid; place-items: center; width: 44px; height: 44px; padding: 10px; border: 1px solid rgba(255,255,255,.55); border-radius: 50%; background: rgba(0,0,0,.45); color: #fff; cursor: pointer; }
+    .cover-toggle:hover { background: rgba(0,0,0,.7); }
+    .cover-toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    @media (prefers-reduced-motion: reduce) { .cover-image { transition: none; } }
+    h1 { margin: 0 0 10px; font-size: clamp(28px, 3.5vw, 40px); line-height: 1.12; letter-spacing: -.045em; }
+    .intro-copy { max-width: 470px; margin: auto 0 0; color: #fff; font-size: 17px; line-height: 1.75; }
+    .icon-pill { display: grid; place-items: center; flex: 0 0 44px; width: 44px; height: 44px; border-radius: 10px; background: var(--green-soft); color: var(--green-dark); }
+    .icon-pill svg { width: 22px; height: 22px; }
+    .icon-pill img { display: block; width: 32px; height: 32px; object-fit: contain; border-radius: 6px; }
+    .methods-panel { scroll-margin-top: 85px; padding: 28px; background: #fff; border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,.06); }
+    .methods-panel h2 { margin: 0 0 18px; font-size: 22px; line-height: 1.3; letter-spacing: -.03em; }
+    .status { margin: 0 0 12px; color: var(--muted); font-size: 14px; }
+    #copy-status:not(:empty), #qr-error { color: #9c292d; }
+    .accordion-group { display: flex; flex-direction: column; gap: 12px; }
+    .accordion-item { overflow: hidden; border: 1px solid var(--border); border-radius: 12px; background: #fff; }
+    .accordion-item.active { border-color: #9ed5b9; }
+    .accordion-header { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 12px; padding: 16px; border: 0; background: transparent; color: inherit; text-align: left; cursor: pointer; }
+    .accordion-header:hover { background: #f7fbf8; }
+    #bank-method { --bank-bg: var(--green-soft); --bank-hover: #d6f1e4; --bank-ink: var(--green-dark); }
+    #bank-method[data-bank="pichincha"] { --bank-bg: #ffdd00; --bank-hover: #f2d200; --bank-ink: #0f265c; }
+    #bank-method[data-bank="guayaquil"] { --bank-bg: #a80058; --bank-hover: #870047; --bank-ink: #fff; }
+    #bank-method[data-bank="nvio"] { --bank-bg: #003755; --bank-hover: #002b42; --bank-ink: #fff; }
+    #bank-method[data-bank="lead"] { --bank-bg: #07021d; --bank-hover: #1b1534; --bank-ink: #fff; }
+    #bank-method .accordion-header { background: var(--bank-bg); color: var(--bank-ink); }
+    #bank-method .accordion-header:hover { background: var(--bank-hover); }
+    #deuna-method .accordion-header { background: linear-gradient(135deg, #5c2d91, #3e1c66); color: #fff; }
+    #deuna-method .accordion-header:hover { background: linear-gradient(135deg, #4b2378, #2f144f); }
+    #paypal-method .accordion-header { background: #0070ba; color: #fff; }
+    #paypal-method .accordion-header:hover { background: #005ea6; }
+    #bank-method .icon-pill { background: #fff; color: var(--bank-ink); }
+    #bank-method[data-bank="pichincha"] .icon-pill { background: #0f265c; color: #ffdd00; }
+    #bank-method[data-bank="guayaquil"] .icon-pill { color: #a80058; }
+    #bank-method[data-bank="nvio"] .icon-pill { color: #003755; }
+    #bank-method[data-bank="lead"] .icon-pill { color: #07021d; }
+    #bank-method .icon-pill img { object-fit: contain; }
+    #bank-method[data-bank="pichincha"] .icon-pill img { object-fit: cover; object-position: left center; }
+    #bank-method .icon-pill svg { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    #deuna-method .icon-pill, #paypal-method .icon-pill { background: #fff; }
+    #bank-method .header-titles span { color: var(--bank-ink); }
+    #deuna-method .header-titles span, #paypal-method .header-titles span { color: #fff; }
+    .accordion-header .chevron { color: inherit; }
+    .header-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .header-titles strong, .header-titles span { display: block; }
+    .header-titles strong { font-size: 15px; line-height: 1.35; }
+    .header-titles span { margin-top: 2px; color: var(--muted); font-size: 12px; }
+    .chevron { flex: 0 0 20px; width: 20px; height: 20px; color: var(--green-dark); transition: transform .2s; }
+    .accordion-item.active .chevron { transform: rotate(180deg); }
+    .accordion-content { display: none; padding: 0 16px 16px; }
+    .accordion-item.active .accordion-content { display: block; }
+    .info-box { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--background); }
+    .info-text { min-width: 0; }
+    .info-text small, .info-text strong { display: block; }
+    .info-text small { color: var(--muted); font-size: 12px; }
+    .info-text strong { font-size: 14px; overflow-wrap: anywhere; }
+    .holder-role { display: inline-block; margin-top: 3px; padding: 2px 8px; border-radius: 6px; background: var(--green-soft); color: var(--green-dark); font-size: 11px; font-weight: 600; }
+    .btn-copy { flex-shrink: 0; padding: 6px 10px; border: 1px solid #b6dcc8; border-radius: 8px; background: #fff; color: var(--green-dark); font-size: 12px; font-weight: 700; cursor: pointer; }
+    .btn-copy:hover { background: var(--green-soft); }
+    .btn-copy.copied { border-color: var(--green-dark); background: var(--green-dark); color: #fff; }
+    .qr-area { text-align: center; }
+    .qr-frame { width: 175px; height: 175px; margin: 4px auto 16px; padding: 6px; border: 1px solid var(--border); border-radius: 12px; background: #fff; }
+    .qr-frame img { display: block; width: 100%; height: 100%; object-fit: contain; }
+    #qr-error { margin: 0 0 12px; font-size: 14px; }
+    .btn-link { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 46px; padding: 10px 16px; border-radius: 9px; background: var(--green-dark); color: #fff; font-size: 14px; font-weight: 700; }
+    .btn-link:hover { background: #006f3c; }
+    .btn-deuna { background: linear-gradient(135deg, #5c2d91, #3e1c66); }
+    .btn-deuna:hover { background: linear-gradient(135deg, #4b2378, #2f144f); }
+    .btn-paypal { background: #0070ba; }
+    .btn-paypal:hover { background: #005ea6; }
+    .receipt-note { display: flex; align-items: flex-start; gap: 10px; margin: 20px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .receipt-note svg { flex: 0 0 20px; width: 20px; height: 20px; fill: none; stroke: var(--green-dark); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .receipt-note a { color: #006f3c; font-weight: 700; overflow-wrap: anywhere; text-decoration: underline; }
+    .angel-section { margin-bottom: 22px; padding-bottom: 22px; border-bottom: 1px solid var(--border); }
+    .method-step { margin: 0 0 12px; font-size: 16px; line-height: 1.3; letter-spacing: -.02em; }
+    #paso-2 { scroll-margin-top: 85px; }
+    .angel-icons { position: absolute; width: 0; height: 0; overflow: hidden; }
+    .angel-amounts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .angel-amount { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; min-height: 70px; padding: 10px 4px; border: 1px solid var(--border); border-radius: 10px; background: #fff; color: var(--ink); font-size: 15px; font-weight: 700; cursor: pointer; }
+    .angel-amount:hover { border-color: #9ed5b9; }
+    .angel-amount[aria-pressed="true"] { border-color: var(--green-dark); background: var(--green-soft); color: var(--green-dark); }
+    .angel-amount svg, .angel-message svg { flex: 0 0 20px; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .custom-amount-row { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 48px; margin-top: 10px; padding: 8px 14px; border: 1px solid var(--border); border-radius: 10px; background: #fff; transition: border-color .2s, background-color .2s; }
+    .custom-amount-row:focus-within, .custom-amount-row.is-active { border-color: var(--green-dark); background: var(--green-soft); }
+    .custom-amount-row .currency { font-size: 16px; font-weight: 700; color: var(--green-dark); }
+    .custom-amount-row input { width: 100%; border: 0; outline: none; background: transparent; font: inherit; font-size: 15px; font-weight: 700; color: var(--ink); }
+    .custom-amount-row input::placeholder { font-weight: 500; color: var(--muted); }
+    .angel-message { display: flex; align-items: flex-start; gap: 10px; margin-top: 10px; padding: 12px; border-radius: 10px; background: #f3faf6; color: #29543c; font-size: 13px; line-height: 1.5; }
+    .angel-message p { margin: 0; }
+    .share-card { padding: 24px 28px; border: 1px solid var(--border); border-radius: 16px; background: #fff; }
+    .share-card h2 { margin: 0 0 8px; font-size: 18px; line-height: 1.3; letter-spacing: -.03em; }
+    .share-card p { margin: 0 0 16px; color: var(--muted); font-size: 14px; line-height: 1.6; }
+    .share-button { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 48px; padding: 10px 14px; border: 1px solid #c8ded1; border-radius: 10px; background: #f3faf6; color: #006f3c; font-weight: 700; font-size: 14px; cursor: pointer; }
+    .share-button:hover { background: var(--green-soft); }
+    .share-button:disabled { cursor: wait; opacity: .7; }
+    .share-button svg { flex: 0 0 20px; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+    .share-card .share-status { margin: 10px 0 0; color: #9c292d; font-size: 13px; overflow-wrap: anywhere; }
+    footer.site-footer { border-top: 1px solid var(--border); background: #fff; }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 25px 0; }
+    .footer-copy { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 20px; color: var(--muted); font-size: 13px; font-weight: 600; }
+    @media (max-width: 800px) {
+      .donation-page { padding: 24px 0 55px; }
+      .donation-layout { grid-template-columns: 1fr; gap: 18px; }
+    }
+    @media (max-width: 560px) {
+      .container { width: min(100% - 32px, 1140px); }
+      .nav-inner { min-height: 66px; }
+      .brand { font-size: 16px; }
+      .nav-links { gap: 10px; }
+      .nav-link { display: none; }
+      .button { min-height: 38px; padding: 8px 13px; font-size: 12px; }
+      .cover-intro { min-height: 220px; padding: 22px; }
+      .intro-copy { font-size: 15px; line-height: 1.6; }
+      .methods-panel { padding: 20px; }
+      .share-card { padding: 20px; }
+      .footer-inner { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a class="brand" href="../" aria-label="Huellas Felices, inicio">
+        <span class="brand-icon" aria-hidden="true">
+          <img src="https://i.ibb.co/nM167Xzt/fc6582aeeffe9f82419be5e55443f9c3-tplv-tiktokx-cropcenter-1080-1080.jpg" alt="">
+        </span>
+        Huellas Felices
+      </a>
+      <nav class="nav-links" aria-label="Navegación principal">
+        <a class="nav-link" href="../#campanas">Campañas</a>
+        <a class="nav-link" href="../#como-ayudar">Cómo ayudar</a>
+        <a class="button" href="#metodos" aria-current="page">DONAR</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="inicio" class="donation-page">
+    <div class="container donation-layout">
+      <div class="cover-intro">
+        <img class="cover-image is-active" src="https://i.ibb.co/V09Y2YSC/foto-0000000320190404163319-1.png" alt="">
+        <img class="cover-image" src="https://i.ibb.co/5xBh7TPv/4671891.jpg" alt="">
+        <img class="cover-image" src="https://i.ibb.co/5hSmWGXF/images.jpg" alt="">
+        <img class="cover-image" src="https://i.ibb.co/VdwKmYL/perros-callejeros.jpg" alt="">
+        <button id="cover-toggle" class="cover-toggle" type="button" aria-label="Pausar cambio de fotos" title="Pausar cambio de fotos" hidden>
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path id="cover-pause-icon" d="M8 5v14M16 5v14"></path><path id="cover-play-icon" d="M8 5l11 7-11 7z" hidden></path></svg>
+        </button>
+        <h1>Tu ayuda deja <span>huella.</span></h1>
+        <p class="intro-copy">Cada dólar se destina directamente al sustento, salud y rescate de cientos de perritos en todo el país.</p>
+      </div>
+
+      <section class="methods-panel" id="metodos" aria-labelledby="methods-title">
+        <h2 id="methods-title">Cómo donar</h2>
+        <section class="angel-section" aria-labelledby="angel-title">
+          <h3 id="angel-title" class="method-step">Paso 1: Selecciona un monto</h3>
+          <svg class="angel-icons" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+            <symbol id="angel-food" viewBox="0 0 24 24"><path d="M3 12h18l-1.5 6h-15zM7 8c0-1 1-1 1-2M12 8c0-1 1-1 1-2M17 8c0-1 1-1 1-2"></path><path d="M7 21h10"></path></symbol>
+            <symbol id="angel-vitamin" viewBox="0 0 24 24"><path d="M10 4a5 5 0 0 1 7 7l-6 6a5 5 0 0 1-7-7zM7 7l7 7"></path></symbol>
+            <symbol id="angel-care" viewBox="0 0 24 24"><path d="M6 3v5a4 4 0 0 0 8 0V3M4 3h4M12 3h4M10 12v3a5 5 0 0 0 10 0v-1"></path><circle cx="20" cy="12" r="2"></circle></symbol>
+            <symbol id="angel-heart" viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.5-9A5.5 5.5 0 0 1 12 6.5 5.5 5.5 0 0 1 21.5 12c-2.5 4.6-9.5 9-9.5 9z"></path></symbol>
+          </svg>
+          <div class="angel-amounts" role="group" aria-label="Montos sugeridos">
+            <button class="angel-amount" type="button" aria-pressed="false" data-amount="3" data-icon="#angel-food" data-message="Un aporte de $3 puede ayudar con alimento."><svg aria-hidden="true"><use href="#angel-food"></use></svg><span>$3</span></button>
+            <button class="angel-amount" type="button" aria-pressed="false" data-amount="5" data-icon="#angel-vitamin" data-message="Un aporte de $5 puede ayudar con vitaminas."><svg aria-hidden="true"><use href="#angel-vitamin"></use></svg><span>$5</span></button>
+            <button class="angel-amount" type="button" aria-pressed="false" data-amount="15" data-icon="#angel-care" data-message="Un aporte de $15 puede contribuir a la atención veterinaria."><svg aria-hidden="true"><use href="#angel-care"></use></svg><span>$15</span></button>
+          </div>
+          <label class="custom-amount-row" id="custom-amount-row" for="custom-amount-input">
+            <span class="currency">$</span>
+            <input id="custom-amount-input" type="number" min="1" step="any" inputmode="decimal" placeholder="O ingresa otro monto libre" aria-label="Monto libre en dólares">
+          </label>
+          <div class="angel-message" role="status">
+            <svg aria-hidden="true"><use id="angel-message-icon" href="#angel-food"></use></svg>
+            <p id="angel-message-text">Un aporte de $3 puede ayudar con alimento.</p>
+          </div>
+        </section>
+
+        <h3 id="paso-2" class="method-step">Paso 2: Elige una vía de donación</h3>
+        <p id="donation-status" class="status" role="status">Cargando métodos de donación…</p>
+        <p id="copy-status" class="status" role="status"></p>
+        <div class="accordion-group">
+
+          <!-- 1. Transferencia bancaria -->
+          <div class="accordion-item" id="bank-method" hidden>
+            <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">
+              <div class="header-left">
+                <span class="icon-pill" aria-hidden="true">
+                  <img id="bank-logo" alt="" hidden>
+                  <svg id="bank-icon" viewBox="0 0 24 24"><path d="M3 9h18L12 3 3 9zm2 0v9m5-9v9m4-9v9m5-9v9M3 18h18M2 21h20"></path></svg>
+                </span>
+                <div class="header-titles">
+                  <strong id="bank-name">Transferencia bancaria</strong>
+                  <span id="bank-type">Transferencia directa</span>
+                </div>
+              </div>
+              <svg class="chevron" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <div class="accordion-content">
+              <div class="info-box" id="bank-account-row" hidden>
+                <div class="info-text">
+                  <small id="bank-account-label">Número de cuenta</small>
+                  <strong id="cuenta"></strong>
+                </div>
+                <button type="button" class="btn-copy" data-copy="cuenta" aria-label="Copiar número de cuenta">Copiar</button>
+              </div>
+
+              <div class="info-box" id="clabe-row" hidden>
+                <div class="info-text">
+                  <small>CLABE interbancaria</small>
+                  <strong id="clabe"></strong>
+                </div>
+                <button type="button" class="btn-copy" data-copy="clabe" aria-label="Copiar CLABE interbancaria">Copiar</button>
+              </div>
+
+              <div class="info-box" id="routing-ach-row" hidden>
+                <div class="info-text">
+                  <small>Número de ruta ACH</small>
+                  <strong id="routing-ach"></strong>
+                </div>
+                <button type="button" class="btn-copy" data-copy="routing-ach" aria-label="Copiar número de ruta ACH">Copiar</button>
+              </div>
+
+              <div class="info-box" id="routing-wire-row" hidden>
+                <div class="info-text">
+                  <small>Número de ruta Wire</small>
+                  <strong id="routing-wire"></strong>
+                </div>
+                <button type="button" class="btn-copy" data-copy="routing-wire" aria-label="Copiar número de ruta Wire">Copiar</button>
+              </div>
+
+              <div class="info-box" id="bank-id-row" hidden>
+                <div class="info-text">
+                  <small id="bank-id-label">Cédula</small>
+                  <strong id="cedula"></strong>
+                </div>
+                <button type="button" class="btn-copy" data-copy="cedula" aria-label="Copiar identificación">Copiar</button>
+              </div>
+
+              <div class="info-box" id="bank-holder-row" hidden>
+                <div class="info-text">
+                  <small>Titular</small>
+                  <strong id="bank-holder"></strong>
+                  <span id="holder-role" class="holder-role">Fundadora y rescatista principal</span>
+                </div>
+                <button type="button" class="btn-copy" data-copy="bank-holder" aria-label="Copiar titular">Copiar</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. De Una -->
+          <div class="accordion-item" id="deuna-method" hidden>
+            <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">
+              <div class="header-left">
+                <span class="icon-pill" aria-hidden="true"><img src="https://www.deuna.ec/assets/images/icon-deuna.png" alt=""></span>
+                <div class="header-titles">
+                  <strong>Deuna!</strong>
+                  <span>Escanea el QR o abre el enlace</span>
+                </div>
+              </div>
+              <svg class="chevron" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <div class="accordion-content">
+              <div class="qr-area">
+                <div class="qr-frame" id="qr-frame" hidden>
+                  <img id="deuna-qr" alt="QR Deuna" />
+                </div>
+                <p id="qr-error" role="status" hidden>No se pudo cargar el QR de Deuna.</p>
+                <a id="deuna-link" class="btn-link btn-deuna" target="_blank" rel="noopener" hidden>Abrir Deuna</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. PayPal -->
+          <div class="accordion-item" id="paypal-method" hidden>
+            <button class="accordion-header" aria-expanded="false" onclick="toggleAccordion(this)">
+              <div class="header-left">
+                <span class="icon-pill" aria-hidden="true"><img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt=""></span>
+                <div class="header-titles">
+                  <strong>PayPal</strong>
+                  <span>Aportes internacionales o tarjeta</span>
+                </div>
+              </div>
+              <svg class="chevron" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <div class="accordion-content">
+              <p style="font-size: 0.84rem; color: var(--text-soft); margin-bottom: 12px; text-align: center;">
+                Apóyanos desde cualquier parte del mundo de forma rápida y segura:
+              </p>
+              <a id="paypal-link" class="btn-link btn-paypal" target="_blank" rel="noopener">Donar con PayPal</a>
+            </div>
+          </div>
+
+        </div>
+
+        <p class="receipt-note">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg>
+          <span>Envíanos tu comprobante a <a href="mailto:donaciones@huellasfelices.com">donaciones@huellasfelices.com</a></span>
+        </p>
+      </section>
+
+      <section class="share-card" aria-labelledby="share-title">
+        <h2 id="share-title">No puedo donar hoy, pero quiero ayudar</h2>
+        <p>Al compartir nuestra causa, ayudas a que más personas conozcan y apoyen a nuestros peluditos.</p>
+        <button id="share-donation" class="share-button" type="button">
+          <svg id="share-icon" aria-hidden="true" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="M8.6 10.5l6.8-4M8.6 13.5l6.8 4"></path></svg>
+          <svg id="share-check" aria-hidden="true" viewBox="0 0 24 24" hidden><path d="M5 12l4 4L19 6"></path></svg>
+          <span id="share-label">Compartir</span>
+        </button>
+        <p id="share-status" class="share-status" role="status" hidden></p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <a class="brand" href="../"><span class="brand-icon" aria-hidden="true"><img src="https://i.ibb.co/nM167Xzt/fc6582aeeffe9f82419be5e55443f9c3-tplv-tiktokx-cropcenter-1080-1080.jpg" alt=""></span> Huellas Felices</a>
+        <p class="footer-copy">Organización dedicada al rescate, rehabilitación, esterilización y adopción responsable de perritos en situación vulnerable. Creemos en un mundo donde cada peludito tenga un hogar amoroso y digno.</p>
+      </div>
+      <nav class="footer-links" aria-label="Navegación del pie de página">
+        <a href="../#campanas">Campañas</a><a href="#metodos">Donar</a><a href="../#como-ayudar">Cómo ayudar</a><a href="#inicio">Volver arriba</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="../api-config.js"></script>
+  <script>
+    const coverImages = Array.from(document.querySelectorAll('.cover-image'));
+    const coverToggle = document.getElementById('cover-toggle');
+    const coverMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let coverPlaying = !coverMotion.matches;
+    let coverTimer;
+
+    function showCover(image) {
+      coverImages.forEach(cover => cover.classList.toggle('is-active', cover === image));
+    }
+
+    function refreshCover() {
+      const available = coverImages.filter(image => image.complete && image.naturalWidth > 0);
+      const current = coverImages.find(image => image.classList.contains('is-active'));
+      if (current.complete && !current.naturalWidth && available.length) showCover(available[0]);
+      coverToggle.hidden = available.length < 2;
+      coverToggle.setAttribute('aria-label', coverPlaying ? 'Pausar cambio de fotos' : 'Reproducir fotos');
+      coverToggle.title = coverToggle.getAttribute('aria-label');
+      document.getElementById('cover-pause-icon').toggleAttribute('hidden', !coverPlaying);
+      document.getElementById('cover-play-icon').toggleAttribute('hidden', coverPlaying);
+      clearInterval(coverTimer);
+      if (coverPlaying && available.length > 1) {
+        coverTimer = setInterval(() => {
+          const currentIndex = available.findIndex(image => image.classList.contains('is-active'));
+          showCover(available[(currentIndex + 1) % available.length]);
+        }, 5000);
+      }
+    }
+
+    coverImages.forEach(image => {
+      image.addEventListener('load', refreshCover);
+      image.addEventListener('error', () => {
+        console.error('No se pudo cargar la imagen de portada:', image.src);
+        refreshCover();
+      });
+    });
+    coverToggle.addEventListener('click', () => {
+      coverPlaying = !coverPlaying;
+      refreshCover();
+    });
+    coverMotion.addEventListener('change', event => {
+      if (event.matches) {
+        coverPlaying = false;
+        refreshCover();
+      }
+    });
+    refreshCover();
+
+    const shareButton = document.getElementById('share-donation');
+    const shareLabel = document.getElementById('share-label');
+    const shareIcon = document.getElementById('share-icon');
+    const shareCheck = document.getElementById('share-check');
+    const shareStatus = document.getElementById('share-status');
+    const donationUrl = 'https://huellas-felices.org/donar/';
+    let shareResetTimer;
+
+    shareButton.addEventListener('click', async () => {
+      clearTimeout(shareResetTimer);
+      shareLabel.textContent = 'Compartir';
+      shareIcon.removeAttribute('hidden');
+      shareCheck.setAttribute('hidden', '');
+      shareStatus.hidden = true;
+      shareStatus.textContent = '';
+      shareButton.disabled = true;
+      let nativeShareFailed = false;
+      try {
+        if (navigator.share) {
+          try {
+            await navigator.share({ title: document.title, url: donationUrl });
+            return;
+          } catch (error) {
+            if (error.name === 'AbortError') return;
+            nativeShareFailed = true;
+          }
+        }
+        try {
+          await navigator.clipboard.writeText(donationUrl);
+          shareLabel.textContent = '¡Enlace copiado! Gracias por difundir';
+          shareIcon.setAttribute('hidden', '');
+          shareCheck.removeAttribute('hidden');
+          if (nativeShareFailed) {
+            shareStatus.textContent = 'No se pudo abrir el menú para compartir; se copió el enlace.';
+            shareStatus.hidden = false;
+          }
+          shareResetTimer = setTimeout(() => {
+            shareLabel.textContent = 'Compartir';
+            shareIcon.removeAttribute('hidden');
+            shareCheck.setAttribute('hidden', '');
+            shareStatus.hidden = true;
+          }, 2000);
+        } catch (error) {
+          shareStatus.textContent = 'No se pudo compartir ni copiar. Copia este enlace: ' + donationUrl;
+          shareStatus.hidden = false;
+        }
+      } finally {
+        shareButton.disabled = false;
+      }
+    });
+
+    const amountButtons = Array.from(document.querySelectorAll('.angel-amount'));
+    const customRow = document.getElementById('custom-amount-row');
+    const customInput = document.getElementById('custom-amount-input');
+    const angelMsgText = document.getElementById('angel-message-text');
+    const angelMsgIcon = document.getElementById('angel-message-icon');
+
+    amountButtons.forEach(button => button.addEventListener('click', () => {
+      amountButtons.forEach(option => option.setAttribute('aria-pressed', String(option === button)));
+      customInput.value = '';
+      customRow.classList.remove('is-active');
+      angelMsgText.textContent = button.dataset.message;
+      angelMsgIcon.setAttribute('href', button.dataset.icon);
+      document.getElementById('paso-2').scrollIntoView({
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+        block: 'start'
+      });
+    }));
+
+    customInput.addEventListener('input', () => {
+      const val = parseFloat(customInput.value);
+      const presetMatch = amountButtons.find(btn => Number(btn.dataset.amount) === val);
+
+      amountButtons.forEach(option => option.setAttribute('aria-pressed', String(option === presetMatch)));
+      customRow.classList.toggle('is-active', val > 0);
+
+      if (presetMatch) {
+        angelMsgIcon.setAttribute('href', presetMatch.dataset.icon);
+        angelMsgText.textContent = presetMatch.dataset.message;
+      } else if (val > 0) {
+        angelMsgIcon.setAttribute('href', '#angel-heart');
+        angelMsgText.textContent = `Tu aporte de $${val} ayudará directamente al cuidado y rescate de nuestros peluditos.`;
+      } else {
+        angelMsgIcon.setAttribute('href', '#angel-food');
+        angelMsgText.textContent = 'Un aporte de $3 puede ayudar con alimento.';
+      }
+    });
+
+    // Abre una opción y cierra las demás para mantener la vista limpia
+    function toggleAccordion(button) {
+      const currentItem = button.parentElement;
+      const isAlreadyOpen = currentItem.classList.contains('active');
+
+      document.querySelectorAll('.accordion-item').forEach(item => {
+        item.classList.remove('active');
+        item.querySelector('.accordion-header').setAttribute('aria-expanded', 'false');
+      });
+
+      if (!isAlreadyOpen || currentItem.id === 'bank-method') {
+        currentItem.classList.add('active');
+        button.setAttribute('aria-expanded', 'true');
+      }
+    }
+
+    document.querySelectorAll('[data-copy]').forEach(button => button.addEventListener('click', async () => {
+      const value = document.getElementById(button.dataset.copy).textContent;
+      const status = document.getElementById('copy-status');
+      status.textContent = '';
+      try {
+        await navigator.clipboard.writeText(value);
+        button.textContent = 'Copiado';
+        button.classList.add('copied');
+        setTimeout(() => { button.textContent = 'Copiar'; button.classList.remove('copied'); }, 2000);
+      } catch (error) {
+        status.textContent = 'No se pudo copiar. Selecciona el dato manualmente.';
+      }
+    }));
+
+    async function cargarDonaciones() {
+      const status = document.getElementById('donation-status');
+      try {
+        const api = window.HUELLAS_API_URL || '';
+        if (!api || api.includes('TU-WORKER')) throw new Error('La conexión a las donaciones aún no está configurada.');
+        const requestedCountry = new URLSearchParams(window.location.search).get('country');
+        const countryQuery = ['EC', 'MX', 'US'].includes(requestedCountry)
+          ? '?country=' + encodeURIComponent(requestedCountry) : '';
+        const response = await fetch(api.replace(/\/+$/, '') + '/api/donation-settings' + countryQuery);
+        if (!response.ok) throw new Error('Error HTTP ' + response.status);
+        const settings = await response.json();
+        const country = Object.prototype.hasOwnProperty.call(settings, 'clabe') ? 'MX' :
+          Object.prototype.hasOwnProperty.call(settings, 'routingAch') ? 'US' : 'EC';
+        const safeUrl = value => {
+          if (!value) return '';
+          const url = new URL(value);
+          if (url.protocol !== 'https:' || url.username || url.password) throw new Error('Un enlace de donación no es válido.');
+          return url.href;
+        };
+        const qr = safeUrl(settings.deunaQr);
+        const deuna = safeUrl(settings.deunaUrl);
+        const paypal = safeUrl(settings.paypalUrl);
+        const bankAccount = settings.accountNumber;
+        const hasBank = country === 'EC' ? Boolean(settings.accountNumber) :
+          country === 'MX' ? Boolean(settings.clabe) :
+            Boolean(settings.accountNumber || settings.routingAch || settings.routingWire);
+        if (hasBank) {
+          const bankName = (settings.bankName || '').trim().toLowerCase();
+          const bankLogo = document.getElementById('bank-logo');
+          const bankIcon = document.getElementById('bank-icon');
+          const bank = /\bpichincha\b/.test(bankName) ? 'pichincha' :
+            /\bguayaquil\b/.test(bankName) ? 'guayaquil' :
+              /\bnvio\b/.test(bankName) ? 'nvio' :
+                /\blead bank\b/.test(bankName) ? 'lead' : '';
+          const logos = {
+            pichincha: 'https://www.pichincha.com/themes/custom/pichincha_theme/logo.svg',
+            guayaquil: 'https://www.bancoguayaquil.com/favicon.svg',
+            nvio: 'https://nvio.mx/favicons/android-chrome-192x192.png',
+            lead: 'https://cdn.prod.website-files.com/6a429b8696dc4bb7b48e6a4b/6a44277eaf1d19ee4a1febab_Lead%20Favicon.png'
+          };
+          const logoUrl = logos[bank];
+          document.getElementById('bank-method').dataset.bank = bank;
+          if (logoUrl) {
+            bankLogo.addEventListener('load', () => {
+              bankLogo.hidden = false;
+              bankIcon.setAttribute('hidden', '');
+            }, { once: true });
+            bankLogo.addEventListener('error', () => {
+              console.warn('No se pudo cargar el logo del banco:', logoUrl);
+              bankLogo.hidden = true;
+              bankIcon.removeAttribute('hidden');
+            }, { once: true });
+            bankLogo.src = logoUrl;
+          }
+          document.getElementById('bank-name').textContent = settings.bankName || 'Transferencia bancaria';
+          document.getElementById('bank-type').textContent = country === 'MX'
+            ? 'CLABE interbancaria'
+            : settings.accountType || (country === 'US' ? 'Checking' : 'Transferencia directa');
+          document.getElementById('bank-id-label').textContent = settings.accountIdType === 'ruc' ? 'RUC' : 'Cédula';
+          [['cuenta', 'bank-account-row', settings.accountNumber],
+            ['cedula', 'bank-id-row', settings.accountId],
+            ['bank-holder', 'bank-holder-row', settings.accountHolder]].forEach(([id, row, value]) => {
+            document.getElementById(id).textContent = value || '';
+            document.getElementById(row).hidden = !value;
+          });
+          document.getElementById('bank-account-row').hidden = !bankAccount;
+          document.getElementById('bank-id-row').hidden = country !== 'EC' || !settings.accountId;
+          document.getElementById('clabe').textContent = country === 'MX' ? settings.clabe || '' : '';
+          document.getElementById('clabe-row').hidden = country !== 'MX' || !settings.clabe;
+          document.getElementById('routing-ach').textContent = settings.routingAch || '';
+          document.getElementById('routing-ach-row').hidden = country !== 'US' || !settings.routingAch;
+          document.getElementById('routing-wire').textContent = settings.routingWire || '';
+          document.getElementById('routing-wire-row').hidden = country !== 'US' || !settings.routingWire;
+          document.getElementById('holder-role').hidden = country !== 'EC';
+          document.getElementById('bank-method').hidden = false;
+        }
+        if (qr || deuna) {
+          document.getElementById('deuna-method').hidden = false;
+          if (qr) {
+            const image = document.getElementById('deuna-qr');
+            image.addEventListener('error', () => {
+              document.getElementById('qr-frame').hidden = true;
+              document.getElementById('qr-error').hidden = false;
+            });
+            image.src = qr;
+            document.getElementById('qr-frame').hidden = false;
+          }
+          if (deuna) {
+            const link = document.getElementById('deuna-link');
+            link.href = deuna;
+            link.hidden = false;
+          }
+        }
+        if (paypal) {
+          document.getElementById('paypal-link').href = paypal;
+          const paypalMethod = document.getElementById('paypal-method');
+          paypalMethod.hidden = false;
+          if (country !== 'EC') paypalMethod.parentElement.prepend(paypalMethod);
+        }
+        status.textContent = hasBank || qr || deuna || paypal
+          ? '' : 'Aún no hay métodos de donación configurados.';
+        status.hidden = !status.textContent;
+      } catch (error) {
+        status.textContent = 'No se pudieron cargar los métodos de donación: ' + error.message;
+      }
+    }
+    cargarDonaciones();
+  </script>
+
+</body>
+</html>
